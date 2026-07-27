@@ -1,0 +1,23 @@
+{
+  // Assets-only Worker: no script, just Astro's static build output.
+  // Cloudflare Workers Builds runs `npm run build` (which runs the secret
+  // scanner first) and then `npx wrangler deploy`.
+  //
+  // "name" must stay "web" — it is the existing Worker. Renaming it here
+  // would create a second Worker and orphan the deployed one.
+  "name": "web",
+  "compatibility_date": "2026-07-27",
+  "assets": {
+    "directory": "./dist",
+    // "auto-trailing-slash" (the default) strips the .html extension, so
+    // /artifacts/.../planner.html 307s to /planner. The planner is published
+    // as a downloadable single file — its URL should be the file's real name.
+    // "force-trailing-slash" keeps Astro's /about/ directory URLs working
+    // while serving explicit .html paths as themselves.
+    "html_handling": "force-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
