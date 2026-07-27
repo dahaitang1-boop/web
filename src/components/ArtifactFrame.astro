@@ -15,7 +15,13 @@ const { src, title, allow, caption, height = '88vh' } = Astro.props;
 <figure class="artifact">
   <div class="bar">
     <span class="k">Live artifact — the real file, not a screenshot</span>
-    <a class="mono open" href={src} target="_blank" rel="noopener">Open full screen ↗</a>
+    <span class="acts">
+      <!-- download= forces a save with a sensible filename regardless of how
+           the host rewrites the URL, which is the point of a single-file
+           artifact: take it up the mountain and open it offline. -->
+      <a class="mono open" href={src} download={src.split('/').pop()}>Save a copy ↓</a>
+      <a class="mono open" href={src} target="_blank" rel="noopener">Open full screen ↗</a>
+    </span>
   </div>
 
   <iframe
@@ -43,6 +49,11 @@ const { src, title, allow, caption, height = '88vh' } = Astro.props;
     border-radius: var(--r) var(--r) 0 0;
     background: var(--bg-deep);
     padding: 0.6rem 1rem;
+  }
+  .acts {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
   .open {
     font-size: 0.78rem;

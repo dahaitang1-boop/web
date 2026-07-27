@@ -9,12 +9,11 @@
   "compatibility_date": "2026-07-27",
   "assets": {
     "directory": "./dist",
-    // "auto-trailing-slash" (the default) strips the .html extension, so
-    // /artifacts/.../planner.html 307s to /planner. The planner is published
-    // as a downloadable single file — its URL should be the file's real name.
-    // "force-trailing-slash" keeps Astro's /about/ directory URLs working
-    // while serving explicit .html paths as themselves.
-    "html_handling": "force-trailing-slash",
+    // Left at the default ("auto-trailing-slash"). Note the consequence:
+    // /artifacts/.../planner.html 307s to the extensionless /planner. The
+    // content is identical and every page route works, so this is cosmetic —
+    // the "save a copy" affordance is handled in the UI with a download
+    // attribute rather than by overriding asset routing.
     "not_found_handling": "404-page"
   },
   "observability": {
