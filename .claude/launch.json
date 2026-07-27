@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "/Users/itsdahai/web/node_modules/.bin/astro",
+      "runtimeArgs": ["dev", "--root", "/Users/itsdahai/web", "--port", "4321"],
+      "port": 4321
+    }
+  ]
+}

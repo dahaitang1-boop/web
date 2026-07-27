@@ -1,0 +1,32 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# environment variables
+.env
+.env.production
+
+# local-only deny layers — never commit.
+# deny-literals.local: exact values are low-entropy (phone numbers, membership
+# numbers); publishing even their sha256 would leak them.
+# deny-patterns.local.toml: rules whose regex contains identifying tokens
+# (a case number, names) that the public rule file must not carry.
+scripts/deny-literals.local
+scripts/deny-patterns.local.toml
+
+# macOS-specific files
+.DS_Store
+
+# jetbrains setting folder
+.idea/

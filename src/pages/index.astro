@@ -1,0 +1,81 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import MetricGrid from '../components/MetricGrid.astro';
+import SystemList from '../components/SystemList.astro';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const published = projects.filter((p) => p.data.status === 'published').length;
+
+const headline = [
+  {
+    label: 'Systems',
+    value: String(projects.length),
+    note: 'built for one user, who is me',
+  },
+  {
+    label: 'Servers run',
+    value: '0',
+    note: 'every one is a local script or a single static file',
+  },
+  {
+    label: 'Written up',
+    value: String(published),
+    note: 'the rest are in use but not yet documented',
+  },
+];
+---
+
+<Base
+  title="Dahai Tang — systems I built to run my own life"
+  description="Berlin-based engineer. Six systems built to run one person's life: news intake, job search, document and deadline admin, finance, trek planning, memoir."
+  bare
+>
+  <section class="wrap hero">
+    <p class="k loc">Berlin, Germany</p>
+    <h1 class="disp">Dahai&nbsp;Tang</h1>
+    <p class="lede">
+      Systems I built to run my own life — and what building them for a user of
+      exactly one taught me.
+    </p>
+  </section>
+
+  <section class="wrap">
+    <MetricGrid metrics={headline} />
+  </section>
+
+  <section class="wrap">
+    <hr class="rule-double" />
+    <h2 class="disp">Index</h2>
+    <SystemList projects={projects} />
+  </section>
+
+  <section class="wrap outro">
+    <p>
+      Everything here started as a problem I had: a briefing worth reading at
+      breakfast, a booking chain that would not close, a stack of official
+      letters with deadlines buried in them. Building for a single known user
+      removes the excuses — there is no persona to hide behind, and the tool
+      either survives contact with the actual week or it doesn't.
+    </p>
+    <p class="k">
+      <a href="/projects/">All systems →</a>
+    </p>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding-block: clamp(3rem, 12vh, 6rem) 0;
+  }
+  .loc {
+    margin: 0 0 0.85rem;
+  }
+  .outro {
+    padding-block: 1rem 2rem;
+    max-width: 68ch;
+  }
+  .outro p:first-child {
+    color: var(--ink-dim);
+  }
+</style>

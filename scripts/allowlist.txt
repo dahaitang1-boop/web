@@ -1,0 +1,50 @@
+# Allowlist for scan_secrets.py
+#
+# One approved literal per line, followed by "#" and a REASON.
+# A line without a reason is a configuration error and the scanner rejects it.
+#
+# Matching is normalised: everything that is not a letter or digit is stripped
+# and the result is lowercased. So "+43 676 3437741" and "+43676343774 1"
+# and "0043-676-3437741" do NOT all collide — only the exact digit sequence
+# after stripping punctuation does. Write the number as it appears.
+#
+# RULE OF THUMB: allowlist a value only if it is already published by someone
+# else (a hut's own website, an authority's contact page) or if you are
+# deliberately choosing to disclose it. Never allowlist to silence a rule.
+#
+# NOTHING from the "lawsuit" rule may ever be listed here.
+
+# --- Alpine hut phone numbers (Berliner Höhenweg planner) -------------------
+# All of these are printed on the huts' own websites and on alpenverein.at.
+# They are the practical value of the published planner: a walker whose plans
+# change at 06:00 needs to phone ahead. Removing them would gut the artifact.
++43 676 3437741   # Gamshütte — published on gamshuette.at
++43 664 73296939  # Dominikushütte — published on dominikushuette.at
++43 688 4218751   # Furtschaglhaus — published on furtschaglhaus.at
++43 664 4176566   # Olpererhütte — published on olpererhuette.info
++43 5286 5113     # Alpengasthaus Breitlahner — published on breitlahner.at
++43 664 1670391   # Alpenrosenhütte — published on alpenrosenhuette.at
++43 5286 52181    # Naturparkhaus Ginzling — public tourist office number
++43 664 88 78 70 25 # Berliner Hütte — published on berlinerhuette.at
++43 664 1405003   # Greizer Hütte — published on greizerhuette.at
++43 664 4016033   # Kasseler Hütte — published on kasseler-huette.at
++43 664 9154851   # Karl-von-Edel-Hütte — published on edelhuette.at
++43 5285 62321    # Pension Steiner Mayrhofen — published booking number
+
+# --- Alpine club / rescue service contact -----------------------------------
++49 30 213092600  # DAV Sektion Berlin office — published on dav-berlin.de
++49 89 306 570 91 # Versicherungskammer Bayern alpine accident cover — public
+140               # Austrian mountain rescue emergency number
+112               # European emergency number
+
+# --- Physical constants -----------------------------------------------------
+6371000           # Earth mean radius in metres — haversine distance in planner.html
+
+# --- Generic German nouns, not values ---------------------------------------
+# The bare word appears as a blank field label and in prose explaining how DAV
+# membership works. It is a common noun, not a number. Any actual number next
+# to it is still caught by the booking-or-member-number rule.
+Mitgliedsnummer   # field label on the blank DAV card template in planner.html
+
+# --- Deliberate disclosures on the portfolio --------------------------------
+# (add here only after consciously deciding to publish the value)

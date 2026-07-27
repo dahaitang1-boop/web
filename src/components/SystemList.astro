@@ -1,0 +1,117 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+}
+const { projects } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+// Fact chips render "value · label", not "value label" — "1 · full re-solves"
+// reads as a labelled datum, so singular/plural never breaks the sentence.
+---
+
+<ol class="systems">
+  {
+    projects.map((p) => {
+      const d = p.data;
+      const live = d.status === 'published';
+      const Tag = live ? 'a' : 'div';
+      return (
+        <li>
+          <Tag class:list={['row', { live }]} href={live ? `/projects/${p.id}/` : undefined}>
+            <span class="idx mono">{pad(d.order)}</span>
+            <span class="body">
+              <span class="name">{d.title}</span>
+              <span class="one">{d.oneLiner}</span>
+              {d.metrics.length > 0 && (
+                <span class="chips facts">
+                  {d.metrics.slice(0, 3).map((m) => (
+                    <span class="chip">
+                      <b>{m.value}</b> · {m.label.toLowerCase()}
+                    </span>
+                  ))}
+                </span>
+              )}
+            </span>
+            <span class="state k">{live ? 'read ↗' : 'write-up pending'}</span>
+          </Tag>
+        </li>
+      );
+    })
+  }
+</ol>
+
+<style>
+  .systems {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    border-top: 1px solid var(--border);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 2.75rem 1fr auto;
+    gap: 0.5rem 1rem;
+    align-items: start;
+    padding: 1.25rem 0.75rem 1.35rem;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: inherit;
+    border-left: 2px solid transparent;
+    transition: border-color 0.18s ease, background-color 0.18s ease;
+  }
+  a.row:hover,
+  a.row:focus-visible {
+    background: var(--surface);
+    border-left-color: var(--accent);
+  }
+  a.row:hover .name {
+    color: var(--accent);
+  }
+  .idx {
+    font-size: 0.8rem;
+    color: var(--muted);
+    padding-top: 0.5rem;
+  }
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+  .name {
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .one {
+    color: var(--ink-dim);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    max-width: 56ch;
+  }
+  .facts {
+    margin-top: 0.25rem;
+  }
+  .state {
+    white-space: nowrap;
+    padding-top: 0.3rem;
+  }
+  a.row .state {
+    color: var(--accent);
+  }
+  div.row {
+    opacity: 0.62;
+  }
+
+  @media (max-width: 640px) {
+    .row {
+      grid-template-columns: 2.25rem 1fr;
+    }
+    .state {
+      grid-column: 2;
+      padding-top: 0.15rem;
+    }
+  }
+</style>

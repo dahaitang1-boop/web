@@ -1,0 +1,100 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import MetricGrid from '../../components/MetricGrid.astro';
+import ArtifactFrame from '../../components/ArtifactFrame.astro';
+
+export async function getStaticPaths() {
+  // 'planned' entries appear in the index but must not generate a page.
+  const entries = await getCollection('projects', ({ data }) => data.status === 'published');
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+
+const repoLabel: Record<typeof d.repoStatus, string> = {
+  'private': 'Private',
+  'open-source': 'Open source',
+  'sanitized-fork': 'Sanitized fork',
+  'architecture-only': 'Architecture only',
+};
+---
+
+<Base title={d.title} description={d.oneLiner}>
+  <article class="wrap">
+    <header class="head">
+      <p class="k">{d.period} · {repoLabel[d.repoStatus]}</p>
+      <h1 class="disp">{d.title}</h1>
+      <p class="lede">{d.oneLiner}</p>
+
+      {
+        d.role !== 'sole author' && d.upstream && (
+          <p class="attrib">
+            <span class="k">Attribution</span>
+            {d.role === 'adapted' ? ' Adapted from ' : ' Forked and reworked from '}
+            <a href={d.upstream} rel="noopener">{d.upstream.replace('https://github.com/', '')}</a>
+            . The upstream project is not mine; this page describes my changes to it.
+          </p>
+        )
+      }
+
+      {
+        d.stack.length > 0 && (
+          <ul class="chips stack">
+            {d.stack.map((s) => (
+              <li class="chip">{s}</li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+
+    {d.metrics.length > 0 && <MetricGrid metrics={d.metrics} />}
+
+    {
+      d.artifact && (
+        <ArtifactFrame
+          src={d.artifact.path}
+          title={d.artifact.title}
+          allow={d.artifact.allow}
+          caption={d.artifact.caption}
+        />
+      )
+    }
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <hr class="rule" />
+    <p class="k"><a href="/projects/">← All systems</a></p>
+  </article>
+</Base>
+
+<style>
+  article {
+    padding-block: 2.5rem;
+  }
+  .head h1 {
+    margin-block: 0.5rem 0;
+  }
+  .attrib {
+    border-left: 2px solid var(--accent);
+    background: var(--bg-deep);
+    border-radius: 0 8px 8px 0;
+    padding: 0.75rem 1rem;
+    margin: 1.5rem 0 0;
+    font-size: 0.92rem;
+    color: var(--ink-dim);
+    max-width: 68ch;
+  }
+  .attrib .k {
+    display: block;
+    margin-bottom: 0.15rem;
+  }
+  .stack {
+    margin-top: 1.25rem;
+  }
+</style>

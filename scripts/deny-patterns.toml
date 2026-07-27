@@ -1,0 +1,123 @@
+# Deny patterns for scan_secrets.py
+#
+# This file is SAFE TO PUBLISH: it stores *patterns*, never values, and no
+# pattern may contain an identifying token. Exact values live locally in
+# deny-literals.local (digests) and deny-patterns.local.toml (identifying
+# rules) — both gitignored, both merged in by scan_secrets.py when present.
+#
+# Every match is checked against scripts/allowlist.txt first. Anything you
+# deliberately want public (hut phone numbers printed on the huts' own
+# websites, your own work-authorisation status) goes there WITH a reason.
+# Deny-by-default, opt-in-with-justification. Never loosen a regex to make
+# a false positive go away — allowlist the specific value instead.
+
+[meta]
+# Never scanned (would self-trigger, or is generated / vendored).
+exclude_paths = [
+  ".git/**",
+  "node_modules/**",
+  "dist/**",
+  ".astro/**",
+  "scripts/deny-patterns.toml",
+  "scripts/deny-patterns.local.toml",
+  "scripts/deny-literals.local",
+  "scripts/allowlist.txt",
+]
+
+# Directory names that must never appear anywhere in ~/web. These are the
+# private trees in ~/lebensadmin and ~/memoir. If one shows up here, an
+# entire folder was copied across by mistake.
+#
+# NOTE: "cv" and "documents" are deliberately NOT here — public/cv/ holds the
+# English CV, which is written to be published.
+deny_path_segments = [
+  "lawsuit",
+  "tax",
+  "identity",
+  "insurance",
+  "employment",
+  "cover_letters",
+  "chapters",
+  "finanz-cockpit",
+  "nachweis",
+]
+
+# ---------------------------------------------------------------- numbers --
+
+[[rule]]
+name = "booking-or-member-number"
+why = "Hut reservation numbers (7 digits) and the 14-digit DAV Mitgliedsnummer"
+regex = '\b\d{7,}\b'
+# Lockfile integrity fields and SVG path data are full of long digit runs.
+exclude = ["package-lock.json", "**/*.svg", "**/*.woff2"]
+
+[[rule]]
+name = "phone-number"
+why = "Private mobile numbers. Hut/authority numbers are public — allowlist those."
+regex = '\+\d{1,3}[\s\-/(]*\d[\d\s\-/()]{5,}\d'
+
+[[rule]]
+name = "iban"
+why = "Bank account. Country-code anchored so it does not fire on base64."
+regex = '\b(?:DE|AT|CH|FR|NL|GB|IT|ES|BE|LU|PL|PT|CA)\d{2}[A-Z0-9]{10,30}\b'
+
+# ---------------------------------------------------- litigation vocabulary --
+
+# NEVER allowlist anything in this rule. Generic German employment-law terms
+# only — case-identifying tokens live in deny-patterns.local.toml, which is
+# gitignored precisely so this public file cannot leak what it protects.
+[[rule]]
+name = "lawsuit"
+why = "Employment-litigation vocabulary — never on a portfolio site, no exceptions."
+flags = "i"
+regex = 'kündigungsschutzklage|kuendigungsschutzklage|verzugslohn|abfindung|prozessvergleich|vergleichsvorschlag|güteverhandlung|kammertermin|§ ?\d+ KSchG|\bKSchG\b|arbeitsgericht berlin|\bArbG Berlin\b|LAG Berlin-Brandenburg'
+
+# ------------------------------------------------------------ personal data --
+
+[[rule]]
+name = "residence-status"
+why = "Immigration status. Allowlist-able on /about if disclosed deliberately."
+flags = "i"
+regex = 'blue ?card|blaue karte|aufenthaltstitel|niederlassungserlaubnis|fiktionsbescheinigung|aufenthg|ausländerbehörde|landesamt für einwanderung'
+
+# Added after a real miss: the DAV membership card in planner.html carried
+# "geb. 08.10.1995" and no rule caught it. A name on a portfolio is fine;
+# a date of birth is not.
+[[rule]]
+name = "date-of-birth"
+why = "Date of birth"
+flags = "i"
+regex = '(?:geb\.|geboren(?: am)?|date of birth|d\.o\.b\.|\bDOB\b)\s*:?\s*\d{1,2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{2,4}'
+
+[[rule]]
+name = "compensation"
+why = "Salary expectations and figures"
+flags = "i"
+regex = 'salary_floor|gehaltsvorstellung|zielgehalt|jahresbruttogehalt|€\s?\d{2,3}[.,]\d{3}\s*(?:brutto|p\.\s?a\.)|\d{2,3}\.\d{3}\s*€\s*brutto'
+
+[[rule]]
+name = "german-id-number"
+why = "Tax ID, insurance and membership numbers"
+flags = "i"
+regex = 'steuer-?id|steuernummer|steuerliche identifikationsnummer|versichertennummer|mitgliedsnummer|personalausweisnummer|sozialversicherungsnummer'
+
+# -------------------------------------------------------------- financial --
+
+[[rule]]
+name = "brokerage"
+why = "IBKR account id, Flex Query credentials, holdings"
+regex = '\bU\d{7}\b|(?i:flex ?query|queryid|\bibkr\b.{0,20}\btoken\b)|token=\d{10,}'
+
+# ------------------------------------------------------------ credentials --
+
+[[rule]]
+name = "credential"
+why = "API keys, tokens, private keys"
+regex = 'sk-[A-Za-z0-9]{20,}|sk-ant-[A-Za-z0-9\-_]{20,}|ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{50,}|AIza[A-Za-z0-9_\-]{35}|xox[baprs]-[A-Za-z0-9-]{10,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|glpat-[A-Za-z0-9\-_]{20,}|AKIA[0-9A-Z]{16}'
+
+[[rule]]
+name = "credential-assignment"
+why = "A secret env var with an actual value on the right-hand side"
+flags = "i"
+# \x27 is an apostrophe: a TOML literal string cannot contain one directly.
+regex = '(?:api_?key|secret|password|passwd|access_?token|enable_banking|deepseek_api_key|anthropic_api_key|email_password)\s*[:=]\s*["\x27]?[A-Za-z0-9/+_\-]{12,}'

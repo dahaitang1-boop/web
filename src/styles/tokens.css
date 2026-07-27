@@ -1,0 +1,267 @@
+/* Warm-paper light theme: ivory ground, charcoal ink, terracotta accent,
+   serif display over sans body. One deliberate look — light only. The
+   embedded artifacts (paper-coloured topo planner) share the same family,
+   so site and artifact read as one continuous document. */
+
+:root {
+  --bg: #faf9f5; /* page — warm ivory */
+  --bg-deep: #f0eee6; /* alternate bands, code, wells */
+  --surface: #ffffff;
+  --border: #e5e1d8;
+  --border-strong: #cfc9bc;
+
+  --ink: #1f1e1d;
+  --ink-dim: #52504a;
+  --muted: #6e6b64;
+
+  --accent: #c15f3c; /* terracotta — links, figures, emphasis */
+  --accent-deep: #9c4a2f; /* hover state */
+  --alert: #b3261e;
+
+  --serif: ui-serif, 'Iowan Old Style', 'Palatino Nova', Palatino, Georgia,
+    'Times New Roman', serif;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
+
+  --r: 12px; /* card radius */
+  --w: 64rem;
+  --pad: clamp(1.25rem, 4vw, 3rem);
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.wrap {
+  max-width: var(--w);
+  margin: 0 auto;
+  padding-inline: var(--pad);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+a:hover {
+  color: var(--accent-deep);
+  text-decoration-color: currentColor;
+}
+
+code,
+kbd,
+.mono {
+  font-family: var(--mono);
+}
+
+/* --- type ---------------------------------------------------------------- */
+
+/* Display: quiet serif, normal case, tight leading. */
+.disp {
+  font-family: var(--serif);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+  text-transform: none;
+}
+
+h1.disp {
+  font-size: clamp(2.2rem, 7vw, 3.9rem);
+  margin: 0;
+}
+
+h2.disp {
+  font-size: 1.35rem;
+  color: var(--ink);
+  margin: 0 0 1rem;
+}
+
+.lede {
+  font-size: clamp(1.05rem, 2.4vw, 1.3rem);
+  color: var(--ink-dim);
+  max-width: 46ch;
+  margin: 1rem 0 0;
+  line-height: 1.55;
+}
+
+/* Eyebrow label. */
+.k {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.k a {
+  color: inherit;
+}
+.k a:hover {
+  color: var(--accent-deep);
+}
+
+/* --- rules --------------------------------------------------------------- */
+
+.rule {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+
+.rule-double {
+  border: 0;
+  border-top: 1px solid var(--border-strong);
+  border-bottom: 1px solid var(--border-strong);
+  height: 3px;
+  margin: 2rem 0;
+  background: none;
+}
+
+/* --- chips --------------------------------------------------------------- */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.chip {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  color: var(--ink-dim);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 0.22rem 0.7rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* --- prose --------------------------------------------------------------- */
+
+.prose {
+  max-width: 68ch;
+}
+.prose h2 {
+  font-family: var(--serif);
+  font-size: 1.45rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 2.75rem 0 0.75rem;
+}
+.prose h3 {
+  font-size: 1.05rem;
+  margin: 2rem 0 0.5rem;
+}
+.prose p,
+.prose li {
+  color: var(--ink-dim);
+}
+.prose strong {
+  color: var(--ink);
+}
+.prose code {
+  font-size: 0.88em;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  padding: 0.05em 0.35em;
+  border-radius: 4px;
+}
+.prose pre {
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  padding: 1rem;
+  overflow-x: auto;
+  border-radius: 8px;
+}
+.prose pre code {
+  border: 0;
+  background: none;
+  padding: 0;
+}
+.prose blockquote {
+  border-left: 2px solid var(--accent);
+  margin: 1.5rem 0;
+  padding-left: 1rem;
+  color: var(--muted);
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+.prose :is(th, td) {
+  border-bottom: 1px solid var(--border);
+  padding: 0.5rem 0.75rem 0.5rem 0;
+  text-align: left;
+  vertical-align: top;
+}
+.prose th {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Wide things scroll inside themselves; the page body never scrolls sideways. */
+.scroll-x {
+  overflow-x: auto;
+}
+
+/* --- motion -------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --- focus --------------------------------------------------------------- */
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+}
+.skip:focus {
+  left: var(--pad);
+  top: 0.5rem;
+  z-index: 10;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  padding: 0.5rem 0.75rem;
+}

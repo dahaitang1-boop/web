@@ -1,0 +1,73 @@
+---
+interface Props {
+  src: string;
+  title: string;
+  /** Feature-policy string. The trek planner calls navigator.geolocation in
+   *  three places; without allow="geolocation" the GPS button fails silently
+   *  inside an iframe — no error, no prompt, just nothing. */
+  allow?: string;
+  caption?: string;
+  height?: string;
+}
+const { src, title, allow, caption, height = '88vh' } = Astro.props;
+---
+
+<figure class="artifact">
+  <div class="bar">
+    <span class="k">Live artifact — the real file, not a screenshot</span>
+    <a class="mono open" href={src} target="_blank" rel="noopener">Open full screen ↗</a>
+  </div>
+
+  <iframe
+    src={src}
+    title={title}
+    allow={allow}
+    loading="lazy"
+    style={`height:${height}`}></iframe>
+
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .artifact {
+    margin: 2.5rem 0;
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    border: 1px solid var(--border);
+    border-bottom: 0;
+    border-radius: var(--r) var(--r) 0 0;
+    background: var(--bg-deep);
+    padding: 0.6rem 1rem;
+  }
+  .open {
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .open:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  iframe {
+    display: block;
+    width: 100%;
+    min-height: 30rem;
+    border: 1px solid var(--border);
+    border-radius: 0 0 var(--r) var(--r);
+    background: #edebe0; /* the artifact's own paper — same family as the page */
+  }
+  figcaption {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 0.7rem;
+    max-width: 68ch;
+  }
+</style>

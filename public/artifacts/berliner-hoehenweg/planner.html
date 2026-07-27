@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Berliner Höhenweg 2026 — Trip Planner</title>
+<style>
+  /* ── AV-Karte token system ─────────────────────────────── */
+  :root{
+    --paper:#EDEBE0;          /* aged map paper, cool */
+    --paper-deep:#E4E1D3;
+    --ink:#21302A;            /* spruce ink */
+    --ink-soft:#4E5A52;
+    --marker-red:#C22F2F;     /* Austrian Wegmarkierung red */
+    --marker-red-dim:#D98B82;
+    --glacier:#BFD8DE;
+    --lake:#A8C9D3;
+    --forest:#4C6B57;
+    --contour:#B9AE93;
+    --card:#F4F2E9;
+    --line:#C9C4B2;
+    --ok:#3E7A52;
+    --warn:#A46A1F;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--paper);color:var(--ink);
+    font:16.5px/1.72 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .disp{font-family:"Avenir Next Condensed","Arial Narrow","Roboto Condensed",system-ui,sans-serif;
+    text-transform:uppercase;letter-spacing:.14em;font-weight:700}
+
+  /* sheet header */
+  header{border-bottom:3px double var(--ink);padding:14px 18px 10px;
+    display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;background:var(--paper)}
+  header h1{font-size:clamp(19px,3.4vw,27px)}
+  header h1 .disp{letter-spacing:.18em}
+  header .sub{color:var(--ink-soft);font-size:12.5px}
+  header .sheetno{margin-left:auto;font-size:11px;color:var(--ink-soft);text-align:right}
+
+  /* layout */
+  .wrap{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(330px,1fr);gap:0}
+  @media(max-width:900px){.wrap{grid-template-columns:1fr}}
+  .mappane{border-right:1px solid var(--line);position:relative;background:var(--paper)}
+  @media(max-width:900px){.mappane{border-right:none;border-bottom:1px solid var(--line)}}
+  #mapbox{position:relative;width:100%}
+  #mapbox svg{display:block;width:100%;height:auto}
+  #topobox{display:none;width:100%;aspect-ratio:1/0.98}
+  #topobox.on{display:block}
+  #mapbox.off{display:none}
+  .maptools{position:absolute;top:10px;right:10px;z-index:500;display:flex;gap:6px}
+  .maptools button{font-size:11px;padding:5px 9px;border:1.5px solid var(--ink);
+    background:var(--card);cursor:pointer;color:var(--ink)}
+  .maptools button.act{background:var(--ink);color:var(--paper)}
+  #toponote{position:absolute;left:10px;bottom:10px;z-index:500;font-size:11px;
+    background:var(--card);border:1px solid var(--line);padding:4px 8px;display:none;max-width:75%}
+  #gpspanel{position:absolute;left:58px;top:10px;z-index:1100;font-size:13px;line-height:1.5;
+    background:var(--card);border:2px solid var(--ink);padding:0;display:none;max-width:min(76%,340px);
+    box-shadow:3px 3px 0 rgba(33,48,42,.25)}
+  #gpspanel .gp-state{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;
+    padding:5px 10px;color:#fff}
+  #gpspanel .gp-state.ok{background:var(--ok)}
+  #gpspanel .gp-state.off{background:var(--marker-red)}
+  #gpspanel .gp-state.na{background:var(--ink-soft)}
+  #gpspanel .gp-body{padding:7px 10px}
+  #gpspanel .gp-target{font-size:14px;font-weight:700}
+  #gpspanel .gp-big{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:17px;
+    font-weight:700;margin:2px 0}
+  #gpspanel .gp-sub{font-size:11px;color:var(--ink-soft)}
+  #gpspanel a{color:var(--marker-red);font-weight:600}
+  .htlbl{background:#F4F2E9;border:1px solid #21302A;border-radius:0;color:#21302A;
+    font-size:11px;padding:1px 5px;box-shadow:none}
+  .htlbl::before{display:none}
+
+  /* side column */
+  .side{padding:18px 20px 30px;display:flex;flex-direction:column;gap:18px;min-width:0}
+  .box{background:var(--card);border:1px solid var(--line);padding:16px 18px}
+  .box h2{font-size:13.5px;margin-bottom:12px}
+  .box h2.disp{letter-spacing:.16em;color:var(--ink-soft)}
+
+  /* date engine */
+  .engine{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center}
+  .engine label{font-size:14px;display:flex;gap:8px;align-items:center;cursor:pointer}
+  .engine input[type=date]{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--ink-soft);
+    background:#fff;color:var(--ink)}
+  .engine input[type=checkbox]{accent-color:var(--marker-red);width:16px;height:16px}
+  #deadline{font-size:13.5px;margin-top:12px;padding:9px 12px;border-left:4px solid var(--ok);background:#fff}
+  #deadline.bad{border-left-color:var(--marker-red);color:var(--marker-red);font-weight:600}
+
+  /* stage chips */
+  .chips{display:flex;flex-direction:column;gap:7px}
+  .chip{display:flex;align-items:center;gap:11px;padding:10px 12px;border:1px solid var(--line);
+    background:#fff;cursor:pointer;font-size:14px;transition:border-color .12s}
+  .chip:hover{border-color:var(--ink-soft)}
+  .chip.sel{border:2px solid var(--marker-red);padding:9px 11px}
+  .chip.done{opacity:.55}
+  .chip.done .t{text-decoration:line-through}
+  .chip.done .n{background:#7E9484}
+  .chip input{accent-color:var(--forest);width:16px;height:16px;flex:none}
+  .chip .n{width:26px;height:26px;flex:none;border-radius:50%;background:var(--ink);color:var(--paper);
+    display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700}
+  .chip.sel .n{background:var(--marker-red)}
+  .chip .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chip .d{font-size:12.5px;color:var(--ink-soft);flex:none;font-family:ui-monospace,monospace}
+  .chip .black{color:var(--marker-red);font-weight:700;flex:none;font-size:11.5px}
+
+  /* detail card */
+  #detail .from{font-size:19px;font-weight:700;line-height:1.3}
+  #detail .datei{color:var(--marker-red);font-size:14px;font-weight:600;margin:4px 0 12px}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+  .stat{background:#fff;border:1px solid var(--line);padding:10px 5px;text-align:center}
+  .stat b{display:block;font-size:17px}
+  .stat.s-up b{color:var(--marker-red)}
+  .stat.s-dn b{color:#2E5E9E}
+  .stat.s-hr b{color:var(--forest)}
+  .stat span{font-size:10.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.07em}
+  .terr{display:flex;flex-wrap:wrap;gap:6px;margin:11px 0}
+  .terr i{font-style:normal;font-size:12px;border:1px solid var(--ink-soft);padding:3px 9px;background:#fff}
+  .terr i.hard{border-color:var(--marker-red);color:var(--marker-red);font-weight:600;background:#FBEDEC}
+  .kv{font-size:14px;display:grid;grid-template-columns:82px 1fr;gap:7px 12px;margin-top:12px}
+  .kv dt{color:var(--ink-soft);font-size:11px;text-transform:uppercase;letter-spacing:.07em;padding-top:3px;font-weight:600}
+  .kv dd a{color:var(--marker-red);font-weight:600}
+  .gonogo{margin-top:14px;border-left:4px solid var(--warn);background:#FBF3D9;padding:11px 13px;font-size:13.5px}
+  .gonogo b{color:var(--warn)}
+
+  /* full plan */
+  section.full{padding:26px 22px;border-top:3px double var(--ink)}
+  section.full h2{font-size:16px;margin-bottom:18px}
+  #plan.hide,#planhint.hide{display:none}
+  #planhint{padding:20px 22px;border-top:3px double var(--ink);color:var(--ink-soft);font-size:15px}
+
+  /* ── day-by-day cards ── */
+  .dayrow{display:grid;grid-template-columns:118px 1fr 296px;gap:0;
+    border:1px solid var(--line);border-left:6px solid var(--ink-soft);
+    background:var(--card);margin:0 0 9px;transition:opacity .15s}
+  .dayrow.hard{border-left-color:var(--marker-red)}
+  .dayrow.easy{border-left-color:var(--ok)}
+  .dayrow.trav{border-left-color:#C9C4B2;background:var(--paper-deep)}
+  .dayrow.trav .d-when,.dayrow.trav .d-main{border-right-color:#E5E2D6}
+  .dayrow.isdone{opacity:.5}
+  .dayrow.isdone .d-main .rt{text-decoration:line-through}
+  @media(max-width:820px){.dayrow{grid-template-columns:1fr}
+    .dayrow>div{border-right:none!important;border-bottom:1px solid var(--line)}
+    .dayrow>div:last-child{border-bottom:none}}
+  .d-when{padding:15px 15px;border-right:1px solid var(--line)}
+  .d-when .dt{font-family:ui-monospace,monospace;font-size:15px;font-weight:700;display:block;line-height:1.35}
+  .d-when .sn{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.11em;margin-top:5px;display:block;font-weight:600}
+  .d-main{padding:15px 18px;border-right:1px solid var(--line);min-width:0}
+  .d-main .rt{font-size:17.5px;font-weight:700;line-height:1.35}
+  .d-main .via{font-size:13.5px;color:var(--ink-soft);margin-top:6px;line-height:1.55}
+  .d-metrics{display:flex;flex-wrap:wrap;gap:16px;margin-top:13px;align-items:center}
+  .m{font-family:ui-monospace,monospace;font-size:15.5px;font-weight:700;white-space:nowrap}
+  .m small{font-family:system-ui,sans-serif;font-size:10.5px;font-weight:400;
+    color:var(--ink-soft);text-transform:uppercase;letter-spacing:.07em;margin-left:4px}
+  .m.up{color:var(--marker-red)}
+  .m.dn{color:#2E5E9E}
+  .m.km{color:var(--ink)}
+  .m.hr{color:var(--forest)}
+  .badge{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    padding:4px 10px;border:1.5px solid;white-space:nowrap}
+  .badge.b-schwarz{color:#fff;background:var(--marker-red);border-color:var(--marker-red)}
+  .badge.b-rot{color:var(--forest);border-color:var(--forest);background:#EAF0EA}
+  .d-sleep{padding:15px 18px;font-size:14px;min-width:0}
+  .d-sleep .hn{font-weight:700;font-size:15.5px;display:block;line-height:1.35}
+  .d-sleep .hd{font-size:12.5px;color:var(--ink-soft);margin-top:4px;display:block;line-height:1.5}
+  .d-sleep .conf{display:inline-block;margin-top:9px;font-family:ui-monospace,monospace;
+    font-size:11.5px;background:#E4F0E7;border:1px solid var(--ok);color:#2A5B3A;padding:3px 8px;font-weight:700}
+  .d-sleep .pend{display:inline-block;margin-top:9px;font-size:11.5px;
+    background:#FBF1DC;border:1px solid var(--warn);color:#7A4E14;padding:3px 8px;font-weight:600}
+  .d-sleep .price{display:block;margin-top:7px;font-family:ui-monospace,monospace;font-size:13px;color:var(--ink)}
+  table{width:100%;border-collapse:collapse;font-size:12.8px;background:var(--card)}
+  th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+  th{background:var(--paper-deep);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em}
+  td .mono{font-size:12px}
+  tr.rest td{background:var(--glacier)}
+  tr.travel td{background:var(--paper-deep)}
+  .totals{margin-top:10px;font-size:13px}
+  .totals b{color:var(--marker-red)}
+  select.status{font:inherit;font-size:12px;padding:2px 4px;border:1px solid var(--line);background:#fff}
+  select.status.booked{background:#DFF0E2;border-color:var(--ok)}
+  select.status.full{background:#F6DBD7;border-color:var(--marker-red)}
+  select.status.requested{background:#FBF3D9;border-color:var(--warn)}
+  td a{color:var(--marker-red)}
+  .tblwrap{overflow-x:auto}
+
+  /* transport / packing */
+  .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+  .cols .box{margin:0}
+  ul.plain{list-style:none;font-size:14px}
+  ul.plain li{padding:7px 0;border-bottom:1px dashed var(--line);line-height:1.6}
+  ul.plain li:last-child{border-bottom:none}
+  ul.pack{list-style:none;font-size:14.5px}
+  ul.pack li{padding:4px 0}
+  ul.pack label{display:flex;gap:10px;align-items:center;cursor:pointer}
+  ul.pack input{accent-color:var(--forest);width:16px;height:16px}
+  ul.pack .off{color:var(--ink-soft);text-decoration:line-through}
+  .em-ph{border:1.5px dashed var(--ink-soft);padding:14px 16px;font-size:14px;color:var(--ink-soft)}
+  .em-ph b{color:var(--marker-red)}
+  .sos{display:flex;gap:12px;margin-bottom:12px}
+  .sos div{flex:1;border:2px solid var(--marker-red);text-align:center;padding:9px 6px}
+  .sos b{display:block;font-size:26px;line-height:1;color:var(--marker-red);font-family:ui-monospace,monospace}
+  .sos span{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft)}
+  .davcard{border:1.5px dashed var(--ink-soft);padding:11px 13px;font-size:13.5px;line-height:1.65;margin-top:4px}
+  .davcard .k{color:var(--ink-soft);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em}
+  footer{padding:16px 22px 26px;font-size:12.5px;color:var(--ink-soft);border-top:1px solid var(--line);line-height:1.65}
+
+  @media(prefers-reduced-motion:no-preference){
+    .stroke-anim{transition:stroke-width .15s,opacity .15s}
+  }
+  svg text{user-select:none}
+  .stg{cursor:pointer}
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span class="disp">Berliner Höhenweg</span></h1>
+  <div class="sub">Zillertaler Runde · 27 Jul – 4 Aug 2026 · solo · DAV Sektion Berlin</div>
+  <div class="sheetno mono">SHEET BHW-2026 · WGS84 stylised<br>planning aid — navigate with AV-Karte 35/1 + GPX</div>
+</header>
+
+<div class="wrap">
+  <!-- ── MAP ── -->
+  <div class="mappane">
+    <div class="maptools">
+      <button id="btnSvg" class="act">Sheet map (offline)</button>
+      <button id="btnTopo">Topo map (online)</button>
+      <button id="btnGps">GPS: off</button>
+      <button id="btnCtr">Center</button>
+    </div>
+    <div id="mapbox"></div>
+    <div id="topobox"></div>
+    <div id="toponote"></div>
+    <div id="gpspanel"></div>
+  </div>
+
+  <!-- ── SIDE ── -->
+  <div class="side">
+    <div class="box">
+      <h2 class="disp">Date engine</h2>
+      <div class="engine">
+        <label>Arrive Mayrhofen <input type="date" id="startDate" value="2026-07-28"></label>
+        <label><input type="checkbox" id="tglMh"> Night in Mayrhofen on arrival</label>
+      </div>
+      <div id="deadline"></div>
+    </div>
+
+    <div class="box">
+      <h2 class="disp" id="chipHdr">Stages — tap to inspect</h2>
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <div class="box" id="detail"></div>
+  </div>
+</div>
+
+<!-- ── FULL PLAN ── -->
+<section class="full" id="plan">
+  <h2 class="disp">Complete plan — day by day</h2>
+  <div id="itin"></div>
+  <div class="totals" id="totals"></div>
+
+  <h2 class="disp" style="margin-top:22px">Booking tracker — hut-reservation.org</h2>
+  <div class="tblwrap"><table id="book"></table></div>
+  <p style="font-size:12px;color:var(--ink-soft);margin-top:8px">
+    Book huts first, train ticket last. Gamshütte: 38 places, cash only, arrive by 17:00.
+    Statuses are saved on this device. Verify season dates in the booking system before paying.</p>
+</section>
+
+<!-- ── TRANSPORT / GO-NOGO / PACKING ── -->
+<section class="full">
+  <div class="cols">
+    <div class="box">
+      <h2 class="disp">Transport</h2>
+      <ul class="plain">
+        <li><b>Outbound ✓ booked €39</b> — Berlin Hbf 23:28 → Mayrhofen 10:29 · car 24, seat 51<br>
+          ICE 905 → <b style="color:var(--marker-red)">München 07:15/07:23 — only 8 min, Gl 15 → Gl 12</b> → RJ 81 → Wörgl 08:44 (27 min) → IR 612 → Jenbach 09:24 (15 min) → R 131 → Mayrhofen</li>
+        <li><b>If the München connection is missed</b> — Zugbindung is lifted automatically; take the next RJ/EC, or regional via Rosenheim–Kufstein. Arriving Mayrhofen by 12:00 still makes Gamshütte comfortably. Call the hut: +43 676 3437741</li>
+        <li><b>To trailhead</b> — Bus 4104 Mayrhofen ⇄ Finkenberg (frequent, ~10–15 min).</li>
+        <li><b>Valley lifeline</b> — Bus 4102 Mayrhofen–Ginzling–Schlegeis Stausee · runs 30 May–4 Oct 2026 · ~hourly from ~08:15 · toll section fee 16+ between Breitlahner and Schlegeis.</li>
+        <li><b>Stilluptal escape</b> — shuttle WL2 / valley taxi from Grüne-Wand-Hütte.</li>
+        <li><b>Ahornbahn</b> — 13 Jun–27 Sep daily 07:30–17:00 every 15 min (then to 31 Oct from 08:30) · cuts 1,300 m of the final descent.</li>
+        <li><b>Return rail</b> — Mayrhofen → Berlin; keep flexible or buy after descent. Hard deadline: back in Berlin by <span class="mono">10 Aug 2026</span>.</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h2 class="disp">Go / No-Go rules</h2>
+      <ul class="plain">
+        <li><b>Stage 2 (11–12 h)</b> — the hardest day; go only on a stable forecast, alpine start 06:00. <b>Plan B:</b> descend Gamshütte→Ginzling ~2 h → Bus 4102 → Schlegeis, walk to Dominikushütte. Same bed, half the day. Check the 4102 timetable the evening before.</li>
+        <li><b>Stage 3 combined day (3,134 m)</b> — cross Schönbichler Horn before midday, 07:00 start. Storm risk before Furtschaglhaus → wait there or turn back to Schlegeis. Bad forecast from the start → <b>Plan B valley route</b>: Bus 4102 → Breitlahner → Zemmgrund → Berliner Hütte (T2, ~7 h, no pass). Decide at Dominikushütte the evening before.</li>
+        <li><b>Stage 7 (Königsetappe)</b> — no escape, no water en route. Bad forecast ⇒ do not start; descend Stilluptal instead (Grüne-Wand → WL2/taxi).</li>
+        <li><b>Fresh snow above ~2,700 m</b> — passes (Schönbichler, Mörchenscharte, Lapenscharte) become hazardous; ask each Hüttenwirt every evening.</li>
+        <li>Afternoon thunderstorms (Gewitter) are the default summer hazard — start early, be off ridges by early afternoon.</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h2 class="disp">Packing — hut-to-hut trim</h2>
+      <ul class="pack" id="packlist"></ul>
+    </div>
+
+    <div class="box">
+      <h2 class="disp">Budget — final</h2>
+      <ul class="plain">
+        <li><b>DAV Sektion Berlin</b> — member card &amp; ASS rescue hotline in the Emergency box below.</li>
+        <li><b>Beds, 7 nights</b> — Gamshütte ~€15 · Dominikushütte €48 (incl. breakfast) · Berliner twin €32 × 2 · Greizer €14 · Kasseler ~€15 · Edelhütte shared €25 → <b>≈ €181</b> + Kurtaxe ~€3 + €10 cancellation fee (Furtschaglhaus)</li>
+        <li><b>Food</b> — one main + one beer per evening (€20–25/day), instant noodles for breakfast, water filtered from streams → <b>€160–200</b></li>
+        <li><b>Rail</b> — outbound <b>€39</b> ✓ booked (car 24, seat 51) · return €40–60 not yet booked</li>
+        <li><b>Buses</b> 4104 + reserve 4102 ≈ €12 · Ahornbahn optional €0–40</li>
+        <li style="border-top:2px solid var(--ink);margin-top:6px;padding-top:9px">
+          <b style="font-size:17px;color:var(--marker-red);font-family:ui-monospace,monospace">€445–545</b> total</li>
+        <li>⚠️ <b>Draw €400 cash in Mayrhofen</b> — Gamshütte and Berliner Hütte are cash-only, no ATM on the route</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h2 class="disp">Emergency — DAV &amp; rescue</h2>
+      <div class="sos">
+        <div><b>140</b><span>Bergrettung — AT alpine rescue</span></div>
+        <div><b>112</b><span>EU emergency — any network</span></div>
+      </div>
+      <div class="davcard">
+        <b>Vorläufiger DAV-Mitgliedsausweis</b> <span class="k">— print and fill in your own</span><br>
+        <b>_____________________________</b> · geb. _______________<br>
+        <span class="k">Mitgliedsnummer</span> <span class="mono">_____________________</span><br>
+        <span class="k">Gültig</span> _____________ – _____________ (bei ungekündigter Mitgliedschaft)<br>
+        <span class="k">Sektion</span> _____________________________________<br>
+        <span class="k">z.&nbsp;B. Sektion Berlin</span> Tel. +49 30 213092600 · service@dav-berlin.de · dav-berlin.de<br>
+        <span class="k">Unterschrift</span> <span style="display:inline-block;border-bottom:1px solid var(--ink-soft);width:210px;height:15px"></span><br>
+        <span class="k">Notruf in den Alpen</span> <span class="mono">112</span> — außerhalb Deutschlands nur über Handy<br>
+        <span class="k">Versicherung bei Bergunfällen (ASS)</span> <span class="mono">+49 89 306 570 91</span> · Versicherungskammer Bayern<br>
+        <i>Nur in Verbindung mit einem amtlichen Lichtbildausweis gültig — Ausweis ausdrucken, <b>unterschreiben</b> und zusammen mit Personalausweis/Reisepass mitführen. Der endgültige Ausweis folgt per Post von der Sektion; erst dessen Mitgliedsnummer erlaubt die Registrierung für „Mein.Alpenverein" und den DAV-Shop. Gegenrecht auf Hütten: Mitgliederpreise und Vorrang auf DAV/ÖAV/AVS/SAC-Hütten.</i>
+      </div>
+      <dl class="kv" style="grid-template-columns:132px 1fr">
+        <dt>Emergency contact</dt><dd>_______________________</dd>
+        <dt>Allergies / meds</dt><dd>_______________________</dd>
+        <dt>Blood type</dt><dd>_______________________</dd>
+      </dl>
+    </div>
+
+    <div class="box">
+      <h2 class="disp">Distress signal — no phone signal</h2>
+      <ul class="plain">
+        <li><b>Call for help</b> — 6 signals/min (whistle, torch, waving) · 1 min pause · repeat</li>
+        <li><b>Answer</b> — 3 signals/min</li>
+        <li><b>Helicopter Y/N</b> — both arms up = YES, need help · one arm up + one down = NO</li>
+        <li><b>112 tip</b> — no bars on your network? Dial 112 anyway, it hops to any available carrier. Flight mode between attempts saves battery.</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h2 class="disp">Storm &amp; cold — quick protocol</h2>
+      <ul class="plain">
+        <li><b>Thunderstorm</b> — off ridges, summits and cable sections immediately; away from summit crosses and lone boulders; crouch on the pack, feet together; spread out if in a group</li>
+        <li><b>Fresh snow / fog on a pass</b> — do not cross, return to the last hut; the Hüttenwirt's read overrides the plan</li>
+        <li><b>Hypothermia signs</b> (stumbling, slurring, confusion) — stop, insulate, sugar + warm drink, call 140 early, do not push on</li>
+        <li><b>Injured &amp; immobile</b> — insulate from the ground first, then call; if no signal, distress signal + send the strongest walker to the nearest hut</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h2 class="disp">Extra hut &amp; valley phones</h2>
+      <p style="font-size:12px;color:var(--ink-soft);margin-bottom:8px">Overnight huts are already in the booking tracker above — these are the extra lunch-stop and fallback numbers that aren't.</p>
+      <ul class="plain">
+        <li><b>Furtschaglhaus</b> (Stage 3 break stop, booking cancelled) — <span class="mono">+43 688 4218751</span></li>
+        <li><b>Olpererhütte</b> (waiting list, 29 Jul) — <span class="mono">+43 664 4176566</span> · info@olpererhuette.info</li>
+        <li><b>Alpengasthaus Breitlahner</b> (Dominikushütte fallback) — <span class="mono">+43 5286 5113</span> · Bus 4102 stop "Abzweigung Breitlahner", check-in ≤19:00</li>
+        <li><b>Alpenrosenhütte</b> (Berliner Hütte / rest-day backup) — <span class="mono">+43 664 1670391</span></li>
+        <li><b>Naturparkhaus Ginzling</b> — <span class="mono">+43 5286 52181</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Data compiled Jul 2026 from Alpenverein, Naturpark Zillertal, hut websites, Bergwelten, tyrol.com, VVT.
+  Distances/elevations vary by source (route totals quoted 71–87 km); figures here are planning-grade.
+  This sheet is a stylised diagram — carry AV-Karte 35/1 (paper) and offline GPX for navigation.
+</footer>
+
+<script>
+/* ═══════════════ DATA ═══════════════ */
+const P = { // key points [lat, lon]
+  mayrhofen:[47.1657,11.8608], finkenberg:[47.1567,11.8592], ginzling:[47.1083,11.7817],
+  gams:[47.12977,11.79572], grauePlatte:[47.112,11.770], feldalm:[47.104,11.758],
+  pitzenalm:[47.088,11.735], wesendl:[47.083,11.725],
+  friesen:[47.06763,11.70209], friesenSee:[47.070,11.700],
+  bridge:[47.0405,11.6905], olperer:[47.04205,11.68836],
+  dam:[47.0500,11.6985], dominikus:[47.048,11.695],
+  lakeS:[47.024,11.708], furtJ:[47.010,11.735], furtschagl:[47.00098,11.74731],
+  schoenScharte:[47.007,11.771], schoenHorn:[47.009,11.773],
+  garberkar:[47.018,11.795], waxegg:[47.021,11.804], berliner:[47.02452,11.81284],
+  schwarzsee:[47.042,11.830], rosskar:[47.043,11.842], moerchen:[47.0432,11.8502],
+  floiten:[47.043,11.868], greizer:[47.04331,11.88571],
+  lapen:[47.05500,11.89513], elsenklamm:[47.058,11.915], stillupHead:[47.059,11.935],
+  kasseler:[47.05942,11.94827],
+  sammerschartl:[47.080,11.936], biwak:[47.08688,11.93265], hasenkar:[47.098,11.925],
+  krumm:[47.108,11.918], popberg:[47.120,11.908], foellenberg:[47.127,11.902],
+  edel:[47.13045,11.89747], fellenberg:[47.1467,11.8846], serp:[47.155,11.875],
+  breitlahner:[47.06068,11.74984], gruenewand:[47.098,11.902],
+  // peaks (decor)
+  pkOlperer:[47.053,11.657], pkHochfeiler:[46.972,11.729], pkMoeseler:[46.989,11.795],
+  pkSchwarzenstein:[47.010,11.875], pkAhorn:[47.132,11.920]
+};
+
+const STAGES=[
+ {id:1,from:"Finkenberg",to:"Gamshütte",night:"gams",short:"Finkenberg → Gamshütte",
+  km:"8.0",up:"+1,019",dn:"−60",time:"3.5–5 h",grade:"rot · T2",black:false,
+  way:[P.finkenberg,[47.153,11.845],[47.145,11.828],[47.137,11.812],P.gams],
+  terrain:["Weg 533 Hermann-Hecht-Weg","forest switchbacks","alpine-rose meadows"],
+  landmarks:"Astegg trailhead · treeline at ~1,700 m · famous outdoor shower at the hut",
+  lunch:"Self-carried (supermarket by Mayrhofen Bahnhof before Bus 4104)",
+  dinner:"Gamshütte — Halbpension", sleep:"Gamshütte 1,921 m · DAV Otterfing",
+  hut:{name:"Gamshütte",id:169,tel:"+43 676 3437741"},
+  notes:"ARRIVAL DAY — no night in Mayrhofen. Train reaches Mayrhofen 10:29, Bus 4104 to Finkenberg, on the trail ~11:30, at the hut ~16:00 (17:00 cut-off). Draw cash in Mayrhofen: this hut is cash only. Order the Lunchpaket for stage 2 on arrival — tomorrow is the 11–12 h day.",
+  backup:"None realistic — if full, shift the whole chain by one day.",
+  escape:"Back down to Finkenberg (2 h, Bus 4104) or Ginzling (2 h, Bus 4102)."},
+
+ {id:2,from:"Gamshütte",to:"Dominikushütte",night:"dominikus",short:"Gamshütte → Dominikushütte (via Friesenberghaus)",
+  km:"≈19",up:"+1,300",dn:"−1,420",time:"11–12 h",grade:"schwarz · T3",black:true,
+  way:[P.gams,P.grauePlatte,P.feldalm,P.pitzenalm,P.wesendl,[47.076,11.712],P.friesenSee,P.friesen,[47.058,11.700],P.dam,[47.048,11.6945]],
+  terrain:["longest day of the trek","2,000 m+ for most of it","scree fields","exposed traverses","valley finish"],
+  landmarks:"Graue Platte · Feldalm · Pitzenalm · Wesendlkarsee · Friesenbergsee · Schlegeisspeicher",
+  lunch:"Friesenberghaus 2,498 m (open daytime; carry the Lunchpaket — Pitzenalm unreliable)",
+  dinner:"Dominikushütte — half board included in the rate", sleep:"Dominikushütte 1,805 m · private (Schlegeis valley)",
+  hut:null,
+  notes:"THE hard day: alpine start 06:00, weather-gated. Olpererhütte was fully booked for 2026, so this stage descends from Friesenberghaus to the Schlegeis valley instead. Finishing low (1,805 m) makes tomorrow short and easy. Dorm + half board €68 p.P. (2025 rate, excl. Kurtaxe) — book by e-mail: info@dominikushuette.at",
+  backup:"Alpengasthof Breitlahner further down the valley (Bus 4102).",
+  escape:"From Friesenberghaus descend to Schlegeis ~2.5 h → Bus 4102. Bad forecast: use the Ginzling bypass (see Go/No-Go)."},
+
+ {id:3,from:"Dominikushütte",to:"Berliner Hütte",night:"berliner30",short:"Dominikushütte → Berliner Hütte (combined day)",
+  km:"≈15.5",up:"+1,415",dn:"−1,180",time:"8.5–9 h",grade:"schwarz · T4",black:true,
+  way:[[47.048,11.6945],P.dam,[47.035,11.703],P.lakeS,P.furtJ,P.furtschagl,[47.004,11.758],P.schoenScharte,P.schoenHorn,[47.013,11.783],P.garberkar,P.waxegg,P.berliner],
+  terrain:["combined stages 3+4","route high point 3,134 m","cable-secured summit block","glacier-polished slabs","mid-stage rest stop"],
+  landmarks:"Schlegeisspeicher · Furtschaglhaus 2,295 m (break) · Schönbichler Scharte 3,081 m · Schönbichler Horn ▲3,134 m · Waxeggkees moraine",
+  lunch:"Furtschaglhaus ~09:00–09:30 — eat properly and refill; no supply after this until Berliner Hütte",
+  dinner:"Berliner Hütte — Halbpension €51 or à la carte", sleep:"Berliner Hütte 2,042 m · DAV Berlin",
+  hut:{name:"Berliner Hütte",id:105,tel:"+43 664 88 78 70 25"},
+  notes:"BOOKED — reservation (night 1 of 2). Weather-gated: summit before midday, 07:00 start from Dominikushütte. Bad forecast → Plan B via Ginzling valley (T2, ~7 h, no pass): Dominikushütte → Bus 4102 → Breitlahner → Zemmgrund → Berliner Hütte. Same bed either way. Furtschaglhaus 30.7 booking was cancelled (€10 fee paid). ⚠ Greizer's free-cancellation window closes TONIGHT 18:00 (2 days before the 1 Aug arrival) — check the forecast for Stage 5 on arrival and cancel Greizer now if bailing. Do not wait for the rest day, the window will already be closed by then.",
+  backup:"Plan B valley route via Breitlahner/Zemmgrund keeps the bed without the pass.",
+  escape:"Before Furtschaglhaus: Schlegeis dam → Bus 4102. After the Scharte: down the Zemmgrund to Breitlahner → Bus 4102."},
+
+ {id:4,from:"Berliner Hütte",to:"Berliner Hütte",night:"berliner31",short:"Rest day — Waxeggkees / Schwarzsee",
+  km:"0–8",up:"opt.",dn:"opt.",time:"free",grade:"rot · T2",black:false,
+  way:[P.berliner,P.waxegg],
+  terrain:["rest day","optional glacier walk","optional lake walk"],
+  landmarks:"Waxeggkees glacier snout ~1.5 h · Schwarzsee 2,472 m ~2.5 h return · Damensalon & 1879 building",
+  lunch:"At the hut — kitchen open all day",
+  dinner:"Berliner Hütte — second evening, try what you skipped", sleep:"Berliner Hütte 2,042 m · DAV Berlin",
+  hut:{name:"Berliner Hütte",id:105,tel:"+43 664 88 78 70 25"},
+  notes:"BOOKED — reservation (night 2 of 2). Recovery day after the two hardest days, before three consecutive schwarz stages. Best short walk: Waxeggkees glacier snout via the moraine, no gear needed. Greizer's free-cancellation window closed YESTERDAY evening on arrival (30 Jul 18:00) — if it wasn't cancelled then, a no-show now costs €20.",
+  backup:"—",
+  escape:"Down the Zemmgrund via Alpenrosenhütte to Breitlahner ~2–3 h → Bus 4102."},
+
+ {id:5,from:"Berliner Hütte",to:"Greizer Hütte",night:"greizer",short:"Berliner Hütte → Greizer Hütte (Mörchenscharte 2,872 m)",
+  km:"10.4",up:"+1,000",dn:"−815",time:"6.5–8 h",grade:"schwarz · T4",black:true,
+  way:[P.berliner,[47.031,11.820],P.schwarzsee,P.rosskar,P.moerchen,P.floiten,P.greizer],
+  terrain:["long pass climb","steep cable-secured descent","high scree"],
+  landmarks:"Schwarzsee 2,472 m · Nördliche Mörchenscharte 2,872 m · Floitengrund glacier basin",
+  lunch:"No supply point — Berliner Hütte Lunchpaket",
+  dinner:"Greizer Hütte — good vegetarian/vegan kitchen", sleep:"Greizer Hütte 2,227 m · DAV Greiz",
+  hut:{name:"Greizer Hütte",id:122,tel:"+43 664 1405003"},
+  notes:"Tiered cancellation: free until 18:00 two days before arrival, then €10/night, €20 for a no-show. That free window closes on the rest-day evening at Berliner Hütte — decide there. Lager €14 member / €26 non-member.",
+  backup:"—",
+  escape:"Floitengrund descent via Tristenbachalm to Ginzling ~4.5 h → Bus 4102."},
+
+ {id:6,from:"Greizer Hütte",to:"Kasseler Hütte",night:"kasseler",short:"Greizer Hütte → Kasseler Hütte (Lapenscharte 2,701 m)",
+  km:"≈10",up:"+1,050",dn:"−1,090",time:"6 h",grade:"schwarz · T4",black:true,
+  way:[P.greizer,[47.050,11.890],P.lapen,[47.056,11.905],P.elsenklamm,P.stillupHead,P.kasseler],
+  terrain:["cable-secured passages","gorge crossing","suspension bridges","boulder terrain"],
+  landmarks:"Lapenscharte 2,701 m · Elsenklamm gorge · Stillupgrund head",
+  lunch:"No supply point — Lunchpaket",
+  dinner:"Kasseler Hütte — Bergsteigeressen from €9", sleep:"Kasseler Hütte 2,178 m · DAV Kassel",
+  hut:{name:"Kasseler Hütte",id:178,tel:"+43 664 4016033"},
+  notes:"Confirmed available 4 Aug in your checks. Not to be confused with the Italian Kasseler Hütte (Rifugio Roma).",
+  backup:"—",
+  escape:"Descend Stilluptal to Grüne-Wand-Hütte 2–3 h → shuttle WL2 / valley taxi to Mayrhofen."},
+
+ {id:7,from:"Kasseler Hütte",to:"Karl-von-Edel-Hütte",night:"edel",short:"Kasseler Hütte → Edelhütte (Aschaffenburger Höhenweg)",
+  km:"≈13",up:"+1,000",dn:"−940",time:"8–9 h",grade:"schwarz · T4",black:true,
+  way:[P.kasseler,[47.065,11.945],[47.072,11.940],P.sammerschartl,P.biwak,P.hasenkar,P.krumm,P.popberg,P.foellenberg,P.edel],
+  terrain:["Königsetappe","no escape route","no water en route","Blockgelände boulder fields","exposed balcony traverse"],
+  landmarks:"Sammerschartl 2,392 m · Aschaffenburger Biwak 2,132 m · Popbergnieder 2,448 m · Weg 519",
+  lunch:"No supply point — Lunchpaket + full water load from Kasseler Hütte",
+  dinner:"Karl-von-Edel-Hütte — Halbpension", sleep:"Karl-von-Edel-Hütte 2,238 m · DAV Würzburg",
+  hut:{name:"Karl-von-Edel-Hütte",id:203,tel:"+43 664 9154851"},
+  notes:"The committing day: once past the Biwak there is no reasonable bail-out. Bad forecast ⇒ do not start (see Go/No-Go). Earliest daylight start.",
+  backup:"Aschaffenburger Biwak (emergency shelter only, mid-route).",
+  escape:"None mid-route — decision is made at Kasseler Hütte."},
+
+ {id:8,from:"Karl-von-Edel-Hütte",to:"Mayrhofen",night:null,short:"Edelhütte → Mayrhofen (or Ahornbahn)",
+  km:"8.9",up:"+60",dn:"−1,600",time:"4 h",grade:"rot · T2",black:false,
+  way:[P.edel,[47.138,11.890],P.fellenberg,P.serp,P.mayrhofen],
+  terrain:["long serpentine descent","knee day — poles out"],
+  landmarks:"Fellenbergalm 1,398 m · Ahornbahn top station (~1 h from hut, cuts 1,300 m)",
+  lunch:"Ahorn plateau restaurant or down in Mayrhofen",
+  dinner:"Mayrhofen — celebrate, then night train", sleep:"Return travel (or optional Mayrhofen night)",
+  hut:null,
+  notes:"Ahornbahn runs 07:30–17:00 every 15 min (13 Jun–27 Sep). Walking down the full 1,600 m is honest but optional.",
+  backup:"—",
+  escape:"Ahornbahn."}
+];
+
+const PACK=[
+ ["Hüttenschlafsack (sleeping-bag liner) — mandatory in all huts",true],
+ ["Trekking poles — non-negotiable for the −1,600 m finale",true],
+ ["Gloves for cable-secured sections (St. 4/6/7)",true],
+ ["3-layer clothing: merino base · fleece · wind/rain shell",true],
+ ["Hat + warm gloves — hut nights can touch 0 °C",true],
+ ["Cash (Gamshütte card-free) + DAV membership card",true],
+ ["Water filter (streams) + 2 L capacity for Stage 7",true],
+ ["Headlamp, blister kit, sunscreen, powerbank",true],
+ ["AV-Karte 35/1 paper map + offline GPX (Komoot/AllTrails)",true],
+ ["Tent — LEAVE IN BERLIN (wild camping banned in Tirol)",false],
+ ["Sleeping bag + mat — LEAVE IN BERLIN (huts provide blankets)",false],
+ ["Stove & multi-day food — LEAVE IN BERLIN (Halbpension)",false]
+];
+
+const BOOK_URL=id=>`https://www.hut-reservation.org/reservation/book-hut/${id}/wizard`;
+const DEADLINE=new Date(2026,7,10); // 10 Aug 2026
+
+/* ═══════════════ STATE ═══════════════ */
+let S={start:"2026-07-28",mh:false,done:[false,false,false,false,false,false,false,false],
+       sel:1,status:{},pack:{},notes:{}};
+async function load(){try{const r=await window.storage.get("bhw_state_v1");
+  if(r&&r.value){const v=JSON.parse(r.value);S={...S,...v};}}catch(e){}}
+let saveT=null;
+function save(){clearTimeout(saveT);saveT=setTimeout(async()=>{
+  try{await window.storage.set("bhw_state_v1",JSON.stringify(S));}catch(e){}},400);}
+
+/* ═══════════════ PROJECTION ═══════════════ */
+const B={minLat:46.955,maxLat:47.190,minLon:11.630,maxLon:11.985};
+const W=1000,H=980;
+const X=lon=>(lon-B.minLon)/(B.maxLon-B.minLon)*W;
+const Y=lat=>(B.maxLat-lat)/(B.maxLat-B.minLat)*H;
+const pt=p=>[X(p[1]),Y(p[0])];
+
+function smooth(pts){ // Catmull-Rom → cubic bezier path
+  const q=pts.map(pt);
+  if(q.length<3)return "M"+q.map(p=>p.join(",")).join("L");
+  let d=`M${q[0][0]},${q[0][1]}`;
+  for(let i=0;i<q.length-1;i++){
+    const p0=q[Math.max(0,i-1)],p1=q[i],p2=q[i+1],p3=q[Math.min(q.length-1,i+2)];
+    const c1=[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6];
+    const c2=[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6];
+    d+=`C${c1[0]},${c1[1]} ${c2[0]},${c2[1]} ${p2[0]},${p2[1]}`;
+  }return d;}
+
+/* ═══════════════ SVG SHEET MAP ═══════════════ */
+function buildMap(){
+  const NS="http://www.w3.org/2000/svg";
+  const svg=document.createElementNS(NS,"svg");
+  svg.setAttribute("viewBox",`0 0 ${W} ${H+152}`);
+  let g="";
+
+  // paper + terrain relief
+  g+=`<rect width="${W}" height="${H}" fill="#EDEBE0"/>`;
+  const smC=pts=>{const q=pts.map(pt),n=q.length;let d=`M${q[0][0]},${q[0][1]}`;
+    for(let i=0;i<n;i++){const p0=q[(i-1+n)%n],p1=q[i],p2=q[(i+1)%n],p3=q[(i+2)%n];
+      d+=`C${p1[0]+(p2[0]-p0[0])/6},${p1[1]+(p2[1]-p0[1])/6} ${p2[0]-(p3[0]-p1[0])/6},${p2[1]-(p3[1]-p1[1])/6} ${p2[0]},${p2[1]}`;}
+    return d+"Z";};
+  const cenC=pts=>{let a=0,b=0;pts.forEach(p=>{a+=p[0];b+=p[1]});return[a/pts.length,b/pts.length];};
+  const shr=(pts,f)=>{const c=cenC(pts);return pts.map(p=>[c[0]+(p[0]-c[0])*f,c[1]+(p[1]-c[1])*f]);};
+  const massif=(pts,tone)=>{let s=`<path d="${smC(pts)}" fill="${tone}" stroke="none"/>`;
+    s+=`<path d="${smC(shr(pts,0.72))}" fill="none" stroke="#B9AE93" stroke-width="0.9" opacity="0.5"/>`;
+    s+=`<path d="${smC(shr(pts,0.45))}" fill="none" stroke="#B9AE93" stroke-width="0.8" opacity="0.4"/>`;
+    return s;};
+  const forest=(pts,w)=>`<path d="${smooth(pts)}" fill="none" stroke="#CDD8BE" stroke-width="${w}" stroke-linecap="round" opacity="0.6"/>`;
+  g+=forest([[47.188,11.868],P.mayrhofen,[47.145,11.822],P.ginzling,[47.085,11.765]],34);
+  g+=forest([P.mayrhofen,[47.138,11.878],[47.115,11.895]],26);
+  g+=forest([P.mayrhofen,[47.162,11.905],[47.156,11.95]],22);
+  g+=massif([[47.175,11.655],[47.165,11.73],[47.135,11.775],[47.10,11.755],[47.068,11.73],[47.045,11.665],[47.07,11.638],[47.13,11.636]],"#E4DFCB");
+  g+=massif([[46.99,11.655],[46.972,11.73],[46.985,11.80],[47.00,11.86],[47.008,11.925],[46.99,11.968],[46.966,11.90],[46.963,11.70]],"#E2DCC6");
+  g+=massif([[47.048,11.752],[47.02,11.768],[47.002,11.792],[47.012,11.828],[47.038,11.795]],"#E4DFCB");
+  g+=massif([[47.028,11.898],[47.052,11.918],[47.082,11.898],[47.10,11.872],[47.068,11.862],[47.042,11.875]],"#E4DFCB");
+  g+=massif([[47.098,11.932],[47.118,11.952],[47.152,11.932],[47.162,11.90],[47.138,11.888],[47.115,11.908]],"#E4DFCB");
+  const glacier=pts=>`<path d="${smC(pts)}" fill="#F4F7F6" stroke="#9FC4CE" stroke-width="1.1" opacity="0.95"/>`;
+  g+=glacier([[47.006,11.708],[46.995,11.72],[46.99,11.752],[47.001,11.762],[47.009,11.738]]);
+  g+=glacier([[47.006,11.788],[46.998,11.81],[47.004,11.836],[47.016,11.822],[47.013,11.798]]);
+  g+=glacier([[47.021,11.858],[47.012,11.879],[47.02,11.896],[47.031,11.882],[47.029,11.866]]);
+  g+=glacier([[47.066,11.664],[47.055,11.669],[47.054,11.689],[47.068,11.684]]);
+  g+=`<text x="${X(11.80)}" y="${Y(46.995)}" font-size="9.5" font-style="italic" fill="#6E93A0" text-anchor="middle">Waxeggkees</text>`;
+  g+=`<text x="${X(11.735)}" y="${Y(46.988)}" font-size="9.5" font-style="italic" fill="#6E93A0" text-anchor="middle">Schlegeiskees</text>`;
+
+  // graticule frame
+  g+=`<rect x="6" y="6" width="${W-12}" height="${H-12}" fill="none" stroke="#21302A" stroke-width="2.5"/>`;
+  g+=`<rect x="13" y="13" width="${W-26}" height="${H-26}" fill="none" stroke="#21302A" stroke-width="0.8"/>`;
+  for(let lon=11.7;lon<11.99;lon+=0.1){const x=X(lon);
+    g+=`<line x1="${x}" y1="6" x2="${x}" y2="16" stroke="#21302A" stroke-width="1"/>
+        <line x1="${x}" y1="${H-16}" x2="${x}" y2="${H-6}" stroke="#21302A" stroke-width="1"/>
+        <text x="${x+3}" y="28" font-size="9" fill="#4E5A52">${lon.toFixed(1)}°E</text>`;}
+  for(let lat=47.0;lat<47.19;lat+=0.05){const y=Y(lat);
+    g+=`<line x1="6" y1="${y}" x2="16" y2="${y}" stroke="#21302A" stroke-width="1"/>
+        <line x1="${W-16}" y1="${y}" x2="${W-6}" y2="${y}" stroke="#21302A" stroke-width="1"/>
+        <text x="20" y="${y-3}" font-size="9" fill="#4E5A52">${lat.toFixed(2)}°N</text>`;}
+
+  // valleys (rivers)
+  const river=(pts,w)=>`<path d="${smooth(pts)}" fill="none" stroke="#A8C9D3" stroke-width="${w}"
+      stroke-linecap="round" opacity="0.9"/>`;
+  g+=river([[47.188,11.868],P.mayrhofen,[47.145,11.822],P.ginzling],5);           // Zillertal→Zemm to Ginzling
+  g+=river([P.ginzling,P.breitlahner,[47.045,11.780],[47.030,11.802],P.berliner],3.5); // Zemmgrund
+  g+=river([P.breitlahner,[47.055,11.720],P.dam],3.5);                             // Zamsergrund
+  g+=river([P.ginzling,[47.080,11.830],[47.055,11.862],P.greizer],3);              // Floitengrund
+  g+=river([P.mayrhofen,[47.138,11.878],[47.115,11.895],P.gruenewand,[47.070,11.935],P.kasseler],3); // Stilluptal
+  g+=river([P.mayrhofen,[47.162,11.905],[47.155,11.955]],3);                       // Zillergrund
+
+  // Schlegeis reservoir
+  const lk=[[47.0500,11.6985],[47.0470,11.7020],[47.0380,11.7080],[47.0230,11.7120],
+            [47.0240,11.7050],[47.0350,11.7000],[47.0450,11.6950]].map(pt);
+  g+=`<path d="M${lk.map(p=>p.join(",")).join("L")}Z" fill="#A8C9D3" stroke="#7FAAB6" stroke-width="1.2"/>`;
+  const lakelet=(p,rx,ry)=>{const[x,y]=pt(p);return `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#A8C9D3" stroke="#7FAAB6" stroke-width="1"/>`;};
+  g+=lakelet(P.wesendl,6,4)+lakelet(P.friesenSee,6,4)+lakelet(P.schwarzsee,7,5);
+
+  // border ridge (AT/IT Hauptkamm) + peaks
+  g+=`<path d="${smooth([[46.966,11.660],P.pkHochfeiler,P.pkMoeseler,[46.998,11.838],P.pkSchwarzenstein,[47.020,11.930],[47.030,11.980]])}"
+      fill="none" stroke="#4E5A52" stroke-width="1.4" stroke-dasharray="7 4" opacity="0.75"/>`;
+  const peak=(p,name,el,anchor)=>{const[x,y]=pt(p);
+    return `<path d="M${x-6},${y+5} L${x},${y-6} L${x+6},${y+5} Z" fill="none" stroke="#21302A" stroke-width="1.3"/>
+      <text x="${x}" y="${y+17}" font-size="9.5" text-anchor="${anchor||'middle'}" fill="#21302A" stroke="#EDEBE0" stroke-width="3" paint-order="stroke">${name} <tspan font-family="ui-monospace,monospace">${el}</tspan></text>`;};
+  g+=peak(P.pkOlperer,"Olperer","3476");
+  g+=peak(P.pkHochfeiler,"Hochfeiler","3510");
+  g+=peak(P.pkMoeseler,"Gr. Möseler","3478");
+  g+=peak(P.pkSchwarzenstein,"Schwarzenstein","3369");
+  g+=peak(P.pkAhorn,"Ahornspitze","2973");
+
+  // escape routes (dashed)
+  const esc=pts=>`<path d="${smooth(pts)}" fill="none" stroke="#4E5A52" stroke-width="1.6"
+      stroke-dasharray="3 4" opacity="0.65"/>`;
+  g+=esc([P.gams,[47.118,11.788],P.ginzling]);
+  g+=esc([P.friesen,[47.058,11.700],P.dam]);
+  g+=esc([P.berliner,[47.030,11.802],[47.045,11.780],P.breitlahner]);
+  g+=esc([P.greizer,[47.055,11.862],[47.080,11.830],P.ginzling]);
+  g+=esc([P.kasseler,[47.070,11.935],P.gruenewand]);
+
+  // valley labels
+  const vlab=(lat,lon,txt,rot)=>{const x=X(lon),y=Y(lat);
+    return `<text x="${x}" y="${y}" font-size="11" font-style="italic" fill="#4C6B57" stroke="#EDEBE0" stroke-width="3.5" paint-order="stroke"
+      ${rot?`transform="rotate(${rot} ${x} ${y})"`:''} text-anchor="middle" letter-spacing="1.5">${txt}</text>`;};
+  g+=vlab(47.085,11.757,"Zemmgrund",-52);
+  g+=vlab(47.056,11.716,"Zamsergrund",-28);
+  g+=vlab(47.078,11.845,"Floitengrund",-55);
+  g+=vlab(47.105,11.910,"Stilluptal",-62);
+  g+=vlab(47.160,11.930,"Zillergrund",-20);
+  g+=vlab(46.9805,11.610+0.06,"Zillertaler Hauptkamm — AT / IT",-6);
+
+  // STAGE ROUTES
+  STAGES.forEach(st=>{
+    g+=`<path id="halo${st.id}" d="${smooth(st.way)}" fill="none" stroke="#FFFFFF"
+        stroke-width="7" opacity="0" stroke-linecap="round"/>`;
+    g+=`<path id="stg${st.id}" class="stg stroke-anim" d="${smooth(st.way)}" fill="none"
+        stroke="#C22F2F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+    // stage number bead at midpoint
+    const mid=st.way[Math.floor(st.way.length/2)];const[mx,my]=pt(mid);
+    g+=`<g id="bead${st.id}" class="stg"><circle cx="${mx}" cy="${my}" r="10" fill="#21302A" stroke="#EDEBE0" stroke-width="2"/>
+        <text x="${mx}" y="${my+3.6}" font-size="10.5" font-weight="700" fill="#EDEBE0" text-anchor="middle">${st.id}</text></g>`;
+    g+=`<text x="${mx}" y="${my+24}" font-size="8.5" font-style="italic" fill="#4E5A52" stroke="#EDEBE0" stroke-width="3" paint-order="stroke" text-anchor="middle">${st.time}</text>`;
+  });
+
+  // markers: pass saddles
+  const saddle=(p,name,el)=>{const[x,y]=pt(p);
+    return `<path d="M${x-7},${y-4} Q${x},${y+5} ${x+7},${y-4}" fill="none" stroke="#21302A" stroke-width="1.6"/>
+      <text x="${x}" y="${y-8}" font-size="9" text-anchor="middle" fill="#21302A" stroke="#EDEBE0" stroke-width="3" paint-order="stroke">${name} <tspan font-family="ui-monospace,monospace">${el}</tspan></text>`;};
+  g+=saddle(P.schoenHorn,"Schönbichler Horn ▲","3134");
+  g+=saddle(P.moerchen,"Mörchenscharte","2872");
+  g+=saddle(P.lapen,"Lapenscharte","2701");
+  g+=saddle(P.sammerschartl,"Sammerschartl","2392");
+  g+=saddle(P.popberg,"Popbergnieder","2448");
+  const cbl=p=>{const[x,y]=pt(p);let s="";
+    for(let k=-1;k<=1;k++){s+=`<line x1="${x+k*5-2}" y1="${y+3}" x2="${x+k*5+2}" y2="${y-3}" stroke="#C22F2F" stroke-width="1.6"/>`;}
+    return s+`<text x="${x}" y="${y+15}" font-size="8" fill="#C22F2F" stroke="#EDEBE0" stroke-width="2.5" paint-order="stroke" text-anchor="middle">cables</text>`;};
+  g+=cbl([47.0105,11.7775]);g+=cbl([47.044,11.857]);g+=cbl([47.0555,11.902]);
+  g+=cbl([47.058,11.9145]);g+=cbl([47.1235,11.9045]);
+  const strm=p=>{const[x,y]=pt(p);return `<text x="${x}" y="${y+3}" font-size="12" fill="#7FAAB6" text-anchor="middle">≈</text>`;};
+  g+=strm([47.0215,11.8085]);g+=strm([47.0235,11.7085]);
+
+  // hut / place markers
+  const hut=(p,name,el,dx,dy,anchor)=>{const[x,y]=pt(p);
+    return `<circle cx="${x}" cy="${y}" r="5" fill="#F4F2E9" stroke="#21302A" stroke-width="2"/>
+      <text x="${x+(dx||8)}" y="${y+(dy||4)}" font-size="10.5" font-weight="600" fill="#21302A" stroke="#EDEBE0" stroke-width="3.5" paint-order="stroke"
+        text-anchor="${anchor||'start'}">${name}</text>
+      <text x="${x+(dx||8)}" y="${y+(dy||4)+10}" font-size="8.5" fill="#4E5A52" stroke="#EDEBE0" stroke-width="3" paint-order="stroke"
+        text-anchor="${anchor||'start'}" font-family="ui-monospace,monospace">${el} m</text>`;};
+  const wp=(p,name,dx,dy,anchor)=>{const[x,y]=pt(p);
+    return `<rect x="${x-3.5}" y="${y-3.5}" width="7" height="7" fill="#F4F2E9" stroke="#4E5A52" stroke-width="1.5"/>
+      <text x="${x+(dx||7)}" y="${y+(dy||4)}" font-size="9" fill="#4E5A52" stroke="#EDEBE0" stroke-width="3" paint-order="stroke" text-anchor="${anchor||'start'}">${name}</text>`;};
+  const town=(p,name,dx,dy)=>{const[x,y]=pt(p);
+    return `<rect x="${x-5}" y="${y-5}" width="10" height="10" fill="#21302A"/>
+      <text x="${x+(dx||9)}" y="${y+(dy||4)}" font-size="11.5" font-weight="700" fill="#21302A">${name}</text>`;};
+
+  g+=`<rect x="${pt(P.mayrhofen)[0]-5}" y="${pt(P.mayrhofen)[1]-5}" width="10" height="10" fill="#21302A"/>
+      <text x="${pt(P.mayrhofen)[0]+10}" y="${pt(P.mayrhofen)[1]-2}" font-size="11.5" font-weight="700" fill="#21302A" stroke="#EDEBE0" stroke-width="3.5" paint-order="stroke">MAYRHOFEN</text>`;
+  {const[fx,fy]=pt(P.finkenberg);
+   g+=`<rect x="${fx-5}" y="${fy-5}" width="10" height="10" fill="#21302A"/>
+       <text x="${fx-10}" y="${fy+14}" font-size="11.5" font-weight="700" fill="#21302A" stroke="#EDEBE0" stroke-width="3.5" paint-order="stroke" text-anchor="end">FINKENBERG</text>`;}
+  g+=wp(P.ginzling,"Ginzling · Bus 4102",8,-6);
+  g+=hut(P.gams,"Gamshütte","1921",-10,-8,"end");
+  g+=wp(P.friesen,"Friesenberghaus (lunch)",-10,-8,"end");
+  g+=wp(P.olperer,"Olpererhütte (full 2026)",-10,10,"end");
+  g+=wp(P.dam,"Schlegeis · Bus 4102",9,-4);
+  g+=hut([47.048,11.6945],"Dominikushütte","1805",-10,-8,"end");
+  g+=hut(P.furtschagl,"Furtschaglhaus","2295",8,12);
+  g+=hut(P.berliner,"Berliner Hütte","2042",9,-4);
+  g+=wp(P.schwarzsee,"Schwarzsee",8,-4);
+  g+=hut(P.greizer,"Greizer Hütte","2227",8,14);
+  g+=hut(P.kasseler,"Kasseler Hütte","2178",8,4);
+  g+=wp(P.biwak,"Aschaffenburger Biwak",9,2);
+  g+=hut(P.edel,"Karl-von-Edel-Hütte","2238",9,-2);
+  g+=wp(P.breitlahner,"Breitlahner · Bus 4102",8,12);
+  g+=wp(P.gruenewand,"Grüne-Wand-H. · WL2",9,4);
+  g+=wp(P.pitzenalm,"Pitzenalm 1871",8,-6);
+  g+=wp(P.wesendl,"Wesendlkarsee",8,13);
+  g+=wp([47.075,11.828],"Tristenbachalm",9,4);
+  g+=wp(P.fellenberg,"Fellenbergalm 1398",9,4);
+  g+=wp([47.145,11.877],"Ahornbahn top stn",-9,-4,"end");
+  g+=wp([47.153,11.845],"Astegg",8,-5);
+  g+=wp(P.grauePlatte,"Graue Platte",8,-5);
+  g+=wp(P.feldalm,"Feldalm",-8,10,"end");
+  g+=wp([47.098,11.748],"Kesselalm",8,-5);
+  g+=wp(P.bridge,"Kebema bridge",9,12);
+  g+=wp([47.0235,11.7115],"Zamsgatterl",9,8);
+  g+=wp(P.garberkar,"Garberkar",-8,-5,"end");
+
+  // scale bar + north arrow
+  const kmPx=W/((B.maxLon-B.minLon)*111.32*Math.cos(47*Math.PI/180));
+  g+=`<g transform="translate(30,${H-56})">
+    <line x1="0" y1="0" x2="${kmPx*5}" y2="0" stroke="#21302A" stroke-width="2"/>
+    <rect x="0" y="-4" width="${kmPx}" height="4" fill="#21302A"/>
+    <rect x="${kmPx*2}" y="-4" width="${kmPx}" height="4" fill="#21302A"/>
+    <rect x="${kmPx*4}" y="-4" width="${kmPx}" height="4" fill="#21302A"/>
+    <line x1="0" y1="-8" x2="0" y2="4" stroke="#21302A" stroke-width="1.5"/>
+    <line x1="${kmPx*5}" y1="-8" x2="${kmPx*5}" y2="4" stroke="#21302A" stroke-width="1.5"/>
+    <text x="0" y="17" font-size="9.5" fill="#21302A">0</text>
+    <text x="${kmPx}" y="17" font-size="9.5" fill="#21302A" text-anchor="middle">1</text>
+    <text x="${kmPx*5}" y="17" font-size="9.5" fill="#21302A" text-anchor="middle">5 km</text>
+  </g>`;
+  g+=`<g transform="translate(46,${H-112})">
+    <path d="M0,14 L6,-14 L12,14 L6,6 Z" fill="#21302A"/>
+    <text x="6" y="30" font-size="11" font-weight="700" fill="#21302A" text-anchor="middle">N</text>
+  </g>`;
+  // cartouche legend
+  g+=`<g transform="translate(${W-330},${H-196})">
+    <rect width="312" height="176" fill="#F4F2E9" stroke="#21302A" stroke-width="1.6"/>
+    <text x="14" y="24" font-size="12" font-weight="700" letter-spacing="2">BERLINER HÖHENWEG · 2026</text>
+    <line x1="14" y1="32" x2="298" y2="32" stroke="#21302A" stroke-width="0.8"/>
+    <line x1="16" y1="48" x2="56" y2="48" stroke="#C22F2F" stroke-width="3.2"/><text x="64" y="52" font-size="10">stage route (tap to inspect)</text>
+    <circle cx="24" cy="68" r="5" fill="#F4F2E9" stroke="#21302A" stroke-width="2"/><text x="64" y="72" font-size="10">overnight hut</text>
+    <rect x="20" y="84" width="7" height="7" fill="#F4F2E9" stroke="#4E5A52" stroke-width="1.5"/><text x="64" y="92" font-size="10">waypoint / bus stop</text>
+    <line x1="16" y1="108" x2="56" y2="108" stroke="#4E5A52" stroke-width="1.6" stroke-dasharray="3 4"/><text x="64" y="112" font-size="10">escape route</text>
+    <rect x="16" y="122" width="16" height="10" fill="#F4F7F6" stroke="#9FC4CE" stroke-width="1"/><text x="64" y="131" font-size="10">glacier (Kees)</text>
+    <rect x="16" y="140" width="16" height="10" fill="#CDD8BE"/><text x="64" y="149" font-size="10">valley forest belt</text>
+    <text x="14" y="168" font-size="8.5" fill="#4E5A52">contour rings = higher ground · not for navigation</text>
+  </g>`;
+
+  // elevation profile strip (self-location aid)
+  {
+   const KM=[8,19,15.5,2,10.4,10,13,8.9];
+   const prof=[],marks=[],bnds=[0];let cum=0;
+   STAGES.forEach((st,si)=>{const el=GPSE[st.id].el;
+     let segT=0;const cums=[0];
+     for(let i=1;i<st.way.length;i++){segT+=hav(st.way[i-1],st.way[i]);cums.push(segT);}
+     for(let i=0;i<st.way.length;i++){const d=cum+(segT?cums[i]/segT:0)*KM[si];
+       prof.push([d,el[i]]);
+       if([3134,2872,2701,2498].indexOf(el[i])>=0)marks.push([d,el[i]]);}
+     cum+=KM[si];bnds.push(cum);});
+   const total=cum,pfL=52,pfR=W-24,pfT=H+30,pfB=H+128;
+   const eMin=500,eMax=3300;
+   const px=d=>pfL+d/total*(pfR-pfL),py=e=>pfB-(e-eMin)/(eMax-eMin)*(pfB-pfT);
+   g+=`<rect x="6" y="${H+6}" width="${W-12}" height="140" fill="#F4F2E9" stroke="#21302A" stroke-width="1.6"/>`;
+   g+=`<text x="${pfL}" y="${H+22}" font-size="10" font-weight="700" letter-spacing="1.5" fill="#21302A">ELEVATION PROFILE — full route</text>`;
+   g+=`<text x="${pfR}" y="${H+22}" font-size="9" fill="#4E5A52" text-anchor="end">ticks every 10 km · total ≈ ${Math.round(total)} km</text>`;
+   [1000,2000,3000].forEach(e=>{g+=`<line x1="${pfL}" y1="${py(e)}" x2="${pfR}" y2="${py(e)}" stroke="#C9C4B2" stroke-width="0.8"/><text x="${pfL-6}" y="${py(e)+3}" font-size="9" fill="#4E5A52" text-anchor="end">${e}</text>`;});
+   let pd=`M${px(prof[0][0])},${py(prof[0][1])}`;
+   prof.forEach(p=>{pd+=`L${px(p[0])},${py(p[1])}`;});
+   g+=`<path d="${pd} L${px(total)},${pfB} L${pfL},${pfB} Z" fill="#E2DCC6" opacity="0.7"/>`;
+   g+=`<path d="${pd}" fill="none" stroke="#C22F2F" stroke-width="2"/>`;
+   for(let k=10;k<total;k+=10){g+=`<line x1="${px(k)}" y1="${pfB}" x2="${px(k)}" y2="${pfB+4}" stroke="#21302A" stroke-width="1"/>`;}
+   bnds.forEach((d,i)=>{
+     if(i>0&&i<bnds.length-1)g+=`<line x1="${px(d)}" y1="${pfT-4}" x2="${px(d)}" y2="${pfB}" stroke="#4E5A52" stroke-width="0.7" stroke-dasharray="2 3"/>`;
+     if(i<STAGES.length){const md=(bnds[i]+bnds[i+1])/2;
+       g+=`<circle cx="${px(md)}" cy="${pfB+11}" r="7" fill="#21302A"/><text x="${px(md)}" y="${pfB+14.5}" font-size="9" font-weight="700" fill="#EDEBE0" text-anchor="middle">${i+1}</text>`;}});
+   const hn=["","Gamshütte","Dominikushütte","Berliner Hütte","Berliner (rest)","Greizer Hütte","Kasseler Hütte","Edelhütte"];
+   for(let i=1;i<=7;i++){const d=bnds[i],e=GPSE[i].el[GPSE[i].el.length-1];
+     g+=`<circle cx="${px(d)}" cy="${py(e)}" r="3.5" fill="#F4F2E9" stroke="#21302A" stroke-width="1.6"/>`;
+     g+=`<text x="${px(d)}" y="${py(e)-7}" font-size="8.5" fill="#21302A" stroke="#F4F2E9" stroke-width="2.5" paint-order="stroke" text-anchor="middle">${hn[i]}</text>`;}
+   marks.forEach(m=>{g+=`<text x="${px(m[0])}" y="${py(m[1])-6}" font-size="8.5" font-weight="700" fill="#C22F2F" stroke="#F4F2E9" stroke-width="2.5" paint-order="stroke" text-anchor="middle">${m[1]}</text>`;});
+  }
+
+  svg.innerHTML=g;
+  document.getElementById("mapbox").appendChild(svg);
+  STAGES.forEach(st=>{
+    const h=()=>selectStage(st.id);
+    svg.querySelector(`#stg${st.id}`).addEventListener("click",h);
+    svg.querySelector(`#bead${st.id}`).addEventListener("click",h);
+  });
+}
+
+function paintMap(){
+  STAGES.forEach(st=>{
+    const el=document.querySelector(`#stg${st.id}`);const halo=document.querySelector(`#halo${st.id}`);
+    if(!el)return;
+    const done=S.done[st.id-1],sel=S.sel===st.id;
+    // done stages go grey-green regardless of selection; selection only adds weight
+    el.setAttribute("stroke",done?"#7E9484":"#C22F2F");
+    el.setAttribute("stroke-width",sel?6:done?2.4:3.5);
+    el.setAttribute("opacity",done?0.6:1);
+    el.setAttribute("stroke-dasharray",done?"6 4":"none");
+    halo.setAttribute("opacity",sel?0.95:0);
+    const bead=document.querySelector(`#bead${st.id} circle`);
+    if(bead)bead.setAttribute("fill",sel?"#C22F2F":done?"#7E9484":"#21302A");
+  });
+  if(lmap&&topoLines[1])STAGES.forEach(st=>topoLines[st.id].setStyle(
+    {weight:S.sel===st.id?7:S.done[st.id-1]?3:4.5,
+     color:S.done[st.id-1]?"#7E9484":"#C22F2F",
+     opacity:S.done[st.id-1]?0.6:0.95}));
+}
+
+/* ═══════════════ DATE ENGINE ═══════════════ */
+const fmt=d=>d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
+const iso=d=>d.toISOString().slice(0,10);
+function schedule(){
+  const rows=[];let d=new Date(S.start+"T12:00:00");
+  const dep=new Date(d);dep.setDate(dep.getDate()-1);
+  rows.push({type:"travel",date:dep,txt:"Night train Berlin Hbf 23:28 → Mayrhofen (ICE 905 · RJ 81 · IR 612 · R 131)",night:"train"});
+  if(S.mh){rows.push({type:"travel",date:new Date(d),txt:"Arrive 10:29 · resupply (supermarket, cash) · rest",night:"Mayrhofen (Pension)"});
+    d.setDate(d.getDate()+1);}
+  else{rows.push({type:"note",date:new Date(d),txt:"Arrive 10:29 · Bus 4104 → Finkenberg · straight onto Stage 1",night:null});}
+  STAGES.forEach(st=>{
+    rows.push({type:"stage",date:new Date(d),st,night:st.night});
+    d.setDate(d.getDate()+1);
+  });
+  rows.push({type:"travel",date:new Date(d),txt:"Buffer / return rail Mayrhofen → Berlin (flexible ticket)",night:null});
+  return rows;
+}
+function stageDate(id){const r=schedule().find(x=>x.type==="stage"&&x.st.id===id);return r?r.date:null;}
+
+const HUTMETA={
+  gams:{n:"Gamshütte",id:169,tel:"+43 676 3437741",note:"✓ BOOKED · cash only · arrive ≤17:00"},
+  dominikus:{n:"Dominikushütte",id:null,tel:"+43 664 73296939",note:"⏳ e-mail sent · Olpererhütte WL active · fallback Breitlahner +43 5286 5113"},
+  berliner30:{n:"Berliner Hütte (night 1)",id:105,tel:"+43 664 88 78 70 25",note:"✓ BOOKED · cash only"},
+  berliner31:{n:"Berliner Hütte (night 2 · rest day)",id:105,tel:"+43 664 88 78 70 25",note:"✓ BOOKED"},
+  greizer:{n:"Greizer Hütte",id:122,tel:"+43 664 1405003",note:"✓ BOOKED · free cancel until Berliner arrival eve (30 Jul) 18:00 — not the rest day"},
+  kasseler:{n:"Kasseler Hütte",id:178,tel:"+43 664 4016033",note:"✓ BOOKED · Bergsteigeressen from €9"},
+  edel:{n:"Karl-von-Edel-Hütte",id:203,tel:"+43 664 9154851",note:"✓ BOOKED"}};
+
+/* ═══════════════ RENDER ═══════════════ */
+function renderChips(){
+  const c=document.getElementById("chips");c.innerHTML="";
+  const n=S.done.filter(Boolean).length;
+  const hdr=document.getElementById("chipHdr");
+  if(hdr)hdr.textContent=n?`Stages — ${n} of 8 done`:"Stages — tap to inspect";
+  STAGES.forEach(st=>{
+    const d=stageDate(st.id);
+    const div=document.createElement("div");
+    div.className="chip"+(S.sel===st.id?" sel":"")+(S.done[st.id-1]?" done":"");
+    div.innerHTML=`<input type="checkbox" ${S.done[st.id-1]?"checked":""} title="mark as walked" aria-label="stage ${st.id} done">
+      <span class="n">${st.id}</span><span class="t">${st.from} → ${st.to}</span>
+      ${st.black?'<span class="black">schwarz</span>':''}
+      <span class="d">${d?fmt(d):""}</span>`;
+    div.querySelector("input").addEventListener("click",e=>{e.stopPropagation();
+      S.done[st.id-1]=e.target.checked;save();renderChips();paintMap();});
+    div.addEventListener("click",()=>selectStage(st.id));
+    c.appendChild(div);
+  });
+}
+
+function renderDetail(){
+  const st=STAGES.find(x=>x.id===S.sel);if(!st)return;
+  const d=stageDate(st.id);
+  const hm=st.hut;
+  let hutRow="";
+  if(hm)hutRow=`<dt>Book</dt><dd><a href="${BOOK_URL(hm.id)}" target="_blank" rel="noopener">hut-reservation.org · ID ${hm.id}</a>
+     · <span class="mono">${hm.tel}</span></dd>`;
+  const gonogo=(st.id===2||st.id===4||st.id===7)?
+    `<div class="gonogo"><b>Weather-gated.</b> ${st.id===2?"Stable forecast only; 06:00 start. Plan B: Ginzling bypass by Bus 4102.":st.id===4?"Cross the 3,134 m summit before midday — thunderstorm exposure on cables and ridge.":"No escape and no water en route. The go/no-go call is made the evening before at Kasseler Hütte."}</div>`:"";
+  document.getElementById("detail").innerHTML=`
+    <h2 class="disp">Stage ${st.id}</h2>
+    <div class="from">${st.from} → ${st.to}</div>
+    <div class="datei mono">${d?fmt(d):"—"} · ${st.grade}</div>
+    <div class="stats">
+      <div class="stat"><b class="mono">${st.km}</b><span>km</span></div>
+      <div class="stat s-up"><b class="mono">${st.up}</b><span>ascent</span></div>
+      <div class="stat s-dn"><b class="mono">${st.dn}</b><span>descent</span></div>
+      <div class="stat s-hr"><b class="mono">${st.time}</b><span>time</span></div>
+    </div>
+    <div class="terr">${st.terrain.map(t=>`<i${/no escape|no water|longest|Königs|cable|exposed/.test(t)?' class="hard"':''}>${t}</i>`).join("")}</div>
+    <dl class="kv">
+      <dt>Via</dt><dd>${st.landmarks}</dd>
+      <dt>Lunch</dt><dd>${st.lunch}</dd>
+      <dt>Dinner</dt><dd>${st.dinner}</dd>
+      <dt>Sleep</dt><dd>${st.sleep}</dd>
+      ${hutRow}
+      <dt>Backup</dt><dd>${st.backup}</dd>
+      <dt>Escape</dt><dd>${st.escape}</dd>
+      <dt>Notes</dt><dd>${st.notes}</dd>
+    </dl>${gonogo}`;
+}
+
+function renderPlan(){
+  document.getElementById("plan").classList.remove("hide");
+  const rows=schedule();
+  // Blank on purpose: this published copy is a template. Type your own
+  // reservation numbers in as you book each hut.
+  const BOOKED={gams:"",berliner30:"",berliner31:"",
+    greizer:"",kasseler:"",edel:""};
+  const ROOM={gams:"Lager · ~€15",dominikus:"Dorm incl. breakfast · €48",
+    berliner30:"Twin room · €32",berliner31:"Twin room · €32 (rest day)",
+    greizer:"Lager · €14",kasseler:"Lager · ~€15",edel:"Shared room · €25"};
+  let h="";let walkday=0;
+  rows.forEach(r=>{
+    if(r.type==="stage"){walkday++;
+      const st=r.st,gd=st.black?"hard":(st.id===3||st.id===8?"easy":"");
+      const bcls=st.grade.indexOf("schwarz")>=0?"b-schwarz":"b-rot";
+      const bl=st.grade.indexOf("schwarz")>=0?"schwarz · T"+(st.grade.match(/T(\d)/)||[,"3"])[1]
+        :"rot · T"+(st.grade.match(/T(\d)/)||[,"2"])[1];
+      const key=st.night,cf=key?BOOKED[key]:null,rm=key?ROOM[key]:null;
+      const dn=S.done[st.id-1]?" isdone":"";
+      h+=`<div class="dayrow ${gd}${dn}">
+        <div class="d-when"><span class="dt">${fmt(r.date)}</span><span class="sn">Stage ${st.id}${S.done[st.id-1]?" ✓":""}</span></div>
+        <div class="d-main">
+          <div class="rt">${st.from} → ${st.to}</div>
+          <div class="via">${st.landmarks}</div>
+          <div class="d-metrics">
+            <span class="m km">${st.km}<small>km</small></span>
+            <span class="m up">${st.up}<small>m up</small></span>
+            <span class="m dn">${st.dn}<small>m down</small></span>
+            <span class="m hr">${st.time}</span>
+            <span class="badge ${bcls}">${bl}</span>
+          </div>
+        </div>
+        <div class="d-sleep">
+          <span class="hn">${st.sleep.split(" · ")[0]}</span>
+          <span class="hd">${st.sleep.split(" · ").slice(1).join(" · ")||""}</span>
+          ${rm?`<span class="price">${rm}</span>`:""}
+          ${cf?`<span class="conf">✓ ${cf}</span>`:(key?`<span class="pend">waiting · e-mail sent</span>`:"")}
+        </div></div>`;}
+    else{
+      h+=`<div class="dayrow trav">
+        <div class="d-when"><span class="dt">${fmt(r.date)}</span><span class="sn">Travel</span></div>
+        <div class="d-main"><div class="via" style="font-size:14.5px;color:var(--ink)">${r.txt}</div></div>
+        <div class="d-sleep"><span class="hd">${r.night==="train"?"Night train · seat 51, car 24 · €39":(r.night||"—")}</span></div></div>`;}
+  });
+  document.getElementById("itin").innerHTML=h;
+  if(!bookBuilt)buildBookTable();
+  else patchBookDates();
+  document.getElementById("totals").innerHTML=
+    `<div style="display:flex;flex-wrap:wrap;gap:22px;align-items:baseline;
+       background:var(--card);border:1px solid var(--line);border-left:5px solid var(--ink);padding:14px 18px">
+      <span class="m km" style="font-size:20px">85<small>km total</small></span>
+      <span class="m up" style="font-size:20px">+6,840<small>m ascent</small></span>
+      <span class="m dn" style="font-size:20px">−7,495<small>m descent</small></span>
+      <span class="m hr" style="font-size:20px">${walkday}<small>walking days</small></span>
+      <span style="font-size:13.5px;color:var(--ink-soft)">Sources quote 71–87 km depending on variants — planning-grade figures.</span>
+     </div>`;
+  patchBookDates();
+}
+
+/* booking table: built once, patched on date change */
+let bookBuilt=false;
+function nightsList(){
+  const rows=schedule(),nights=[];
+  rows.forEach(r=>{
+    if(r.type==="travel"&&r.night&&r.night!=="train"&&/Mayrhofen/.test(r.night))
+      nights.push({key:"mh_"+iso(r.date),date:r.date,name:"Mayrhofen — Pension/Gasthaus",link:null,tel:null,note:"e.g. Pension Steiner +43 5285 62321 — book direct"});
+    if(r.type==="stage"&&r.st.night){const m=HUTMETA[r.st.night];
+      nights.push({key:m.id+"_"+iso(r.date),date:r.date,name:m.n,link:BOOK_URL(m.id),tel:m.tel,note:m.note,hid:m.id});}
+  });
+  return nights;
+}
+
+function buildBookTable(){
+  const nights=nightsList();
+  let b=`<tr><th>Night of</th><th>Where</th><th>ID</th><th>Book / phone</th><th>Status</th><th>Note — click to edit</th></tr>`;
+  nights.forEach(n=>{
+    const stv=S.status[n.key]||"pending";
+    const noteVal=(S.notes&&S.notes[n.key]!=null)?S.notes[n.key]:(n.note||"");
+    b+=`<tr data-bk="${n.key}">
+      <td class="mono bk-date">${fmt(n.date)}</td>
+      <td><b>${n.name}</b></td>
+      <td class="mono">${n.hid||"—"}</td>
+      <td>${n.link?`<a href="${n.link}" target="_blank" rel="noopener">reserve</a> · `:""}<span class="mono">${n.tel||""}</span></td>
+      <td><select class="status ${stv}" data-k="${n.key}">
+        ${["pending","requested","booked","full"].map(o=>`<option ${o===stv?"selected":""}>${o}</option>`).join("")}
+      </select></td>
+      <td class="bk-note" data-nk="${n.key}" style="min-width:140px;padding:2px 4px"></td></tr>`;
+  });
+  const tbl=document.getElementById("book");
+  tbl.innerHTML=b;
+
+  /* inject textarea into each note cell */
+  tbl.querySelectorAll(".bk-note").forEach(td=>{
+    const k=td.dataset.nk;
+    const val=(S.notes&&S.notes[k]!=null)?S.notes[k]:
+      (nights.find(n=>n.key===k)||{}).note||"";
+    const ta=document.createElement("textarea");
+    ta.value=val;
+    ta.dataset.nk=k;
+    ta.spellcheck=false;
+    ta.rows=2;
+    ta.style.cssText=[
+      "display:block","width:100%","box-sizing:border-box",
+      "min-height:34px","resize:vertical",
+      "font-size:11.5px","line-height:1.4","font-family:inherit",
+      "color:var(--ink-soft)","background:transparent",
+      "border:none","border-bottom:1px dashed var(--line)",
+      "outline:none","padding:2px 0","cursor:text"
+    ].join(";");
+    ta.addEventListener("input",e=>{
+      if(!S.notes)S.notes={};
+      S.notes[e.target.dataset.nk]=e.target.value;
+      save();
+    });
+    td.innerHTML="";
+    td.appendChild(ta);
+  });
+
+  tbl.querySelectorAll("select.status").forEach(sel=>{
+    sel.addEventListener("change",e=>{
+      S.status[e.target.dataset.k]=e.target.value;
+      e.target.className="status "+e.target.value;
+      save();
+    });
+  });
+  bookBuilt=true;
+}
+
+function patchBookDates(){
+  if(!bookBuilt){buildBookTable();return;}
+  const nights=nightsList();
+  nights.forEach(n=>{
+    const row=document.querySelector(`tr[data-bk="${n.key}"]`);
+    if(row){const dc=row.querySelector(".bk-date");if(dc)dc.textContent=fmt(n.date);}
+  });
+}
+
+function renderDeadline(){
+  const rows=schedule();const last=rows[rows.length-1].date;
+  const el=document.getElementById("deadline");
+  const ok=last<=DEADLINE;
+  el.className=ok?"":"bad";
+  el.innerHTML=(ok?"✓ ":"✗ ")+`Return travel ${fmt(last)} — hard deadline Berlin by <span class="mono">Mon 10 Aug 2026</span>`+
+    (ok?` · buffer ${Math.round((DEADLINE-last)/864e5)} day(s)`: " · OVER DEADLINE — pull the start date forward");
+}
+
+function renderPack(){
+  const ul=document.getElementById("packlist");ul.innerHTML="";
+  PACK.forEach((p,i)=>{
+    const li=document.createElement("li");
+    li.innerHTML=`<label class="${p[1]?"":"off"}"><input type="checkbox" ${S.pack[i]?"checked":""} ${p[1]?"":"disabled"}> ${p[0]}</label>`;
+    if(p[1])li.querySelector("input").addEventListener("change",e=>{S.pack[i]=e.target.checked;save();});
+    ul.appendChild(li);
+  });
+}
+
+function selectStage(id){S.sel=id;save();renderChips();renderDetail();paintMap();
+  document.getElementById("detail").scrollIntoView({behavior:"smooth",block:"nearest"});}
+
+function renderAll(){renderChips();renderDetail();renderPlan();renderDeadline();paintMap();}
+
+/* ═══════════════ TOPO OVERLAY (online) ═══════════════ */
+let leaflet=null,lmap=null,topoLines={},gpsTopoM=null,gpsTopoRing=null,routeBounds=null;
+function note(t){const n=document.getElementById("toponote");n.style.display=t?"block":"none";n.textContent=t||"";}
+async function showTopo(){
+  document.getElementById("btnTopo").classList.add("act");
+  document.getElementById("btnSvg").classList.remove("act");
+  document.getElementById("mapbox").classList.add("off");
+  document.getElementById("topobox").classList.add("on");
+  if(lmap){return;}
+  note("Loading topo tiles… (needs internet)");
+  try{
+    if(!leaflet){
+      await new Promise((res,rej)=>{const l=document.createElement("link");l.rel="stylesheet";
+        l.href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css";
+        l.onload=res;l.onerror=rej;document.head.appendChild(l);});
+      await new Promise((res,rej)=>{const s=document.createElement("script");
+        s.src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
+        s.onload=res;s.onerror=rej;document.head.appendChild(s);});
+      leaflet=window.L;
+    }
+    lmap=leaflet.map("topobox");
+    const tl=leaflet.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+      {maxZoom:16,attribution:"© OpenStreetMap · © OpenTopoMap (CC-BY-SA)"});
+    let failed=0;
+    tl.on("tileerror",()=>{if(++failed===4)note("Topo tiles blocked or offline — switch back to the sheet map.");});
+    tl.on("load",()=>note(""));
+    tl.addTo(lmap);
+    leaflet.control.scale({imperial:false}).addTo(lmap);
+    const allPts=[];
+    STAGES.forEach(st=>{st.way.forEach(p=>allPts.push(p));
+      leaflet.polyline(st.way,{color:"#FFFFFF",weight:8,opacity:0.85}).addTo(lmap);});
+    STAGES.forEach(st=>{
+      const line=leaflet.polyline(st.way,{color:"#C22F2F",weight:4,opacity:0.95}).addTo(lmap);
+      line.bindTooltip(`Stage ${st.id} · ${st.short} · ${st.km} km · ${st.up}`,{sticky:true,className:"htlbl"});
+      line.on("click",()=>selectStage(st.id));
+      topoLines[st.id]=line;
+    });
+    Object.entries(HUTMETA).forEach(([k,m])=>{
+      const p=P[k];if(!p)return;
+      leaflet.circleMarker(p,{radius:6,color:"#21302A",fillColor:"#F4F2E9",fillOpacity:1,weight:2})
+        .addTo(lmap).bindTooltip(m.n,{permanent:true,direction:"top",offset:[0,-6],className:"htlbl"});
+    });
+    [["Schönbichler Horn 3134",P.schoenHorn],["Mörchenscharte 2872",P.moerchen],["Lapenscharte 2701",P.lapen]].forEach(s=>{
+      leaflet.circleMarker(s[1],{radius:4,color:"#21302A",fillColor:"#EDEBE0",fillOpacity:1,weight:1.5})
+        .addTo(lmap).bindTooltip(s[0],{permanent:true,direction:"top",offset:[0,-5],className:"htlbl"});
+    });
+    routeBounds=allPts;
+    lmap.fitBounds(allPts,{padding:[24,24]});
+    paintMap();
+  }catch(e){note("Could not load the online map (offline or blocked). The sheet map has everything you need.");}
+}
+function showSvg(){
+  document.getElementById("btnSvg").classList.add("act");
+  document.getElementById("btnTopo").classList.remove("act");
+  document.getElementById("topobox").classList.remove("on");
+  document.getElementById("mapbox").classList.remove("off");note("");
+}
+
+/* ═══════════════ GPS (coarse trail check — not navigation) ═══════════════ */
+const GPSE={
+ 1:{el:[840,1100,1400,1700,1921]},
+ 2:{el:[1921,2050,1930,1871,2000,2200,2470,2498,2200,1790,1805],mid:{i:7,name:"Friesenberghaus"}},
+ 3:{el:[1805,1782,1790,1800,1900,2295,2700,3081,3134,2763,2400,2200,2042],mid:{i:5,name:"Furtschaglhaus (break)"}},
+ 4:{el:[2042,2300]},
+ 5:{el:[2042,2250,2472,2650,2872,2400,2227]},
+ 6:{el:[2227,2500,2701,2450,2100,2150,2178]},
+ 7:{el:[2178,2300,2350,2392,2132,2250,2300,2448,2350,2238]},
+ 8:{el:[2238,2100,1398,900,633]}};
+const CORRIDOR=500;
+function hav(a,b){const R=6371000,dLa=(b[0]-a[0])*Math.PI/180,dLo=(b[1]-a[1])*Math.PI/180,
+ la1=a[0]*Math.PI/180,la2=b[0]*Math.PI/180;
+ const h=Math.sin(dLa/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dLo/2)**2;
+ return 2*R*Math.asin(Math.sqrt(h));}
+function toM(p,ref){const kx=111320*Math.cos(ref[0]*Math.PI/180);
+ return[(p[1]-ref[1])*kx,(p[0]-ref[0])*110540];}
+function nearestOnRoute(pos){
+ let best=null;
+ STAGES.forEach(st=>{
+  for(let i=0;i<st.way.length-1;i++){
+   const a=toM(st.way[i],pos),b=toM(st.way[i+1],pos);
+   const abx=b[0]-a[0],aby=b[1]-a[1],len2=abx*abx+aby*aby;
+   let t=len2?((-a[0])*abx+(-a[1])*aby)/len2:0;t=Math.max(0,Math.min(1,t));
+   const cx=a[0]+t*abx,cy=a[1]+t*aby,d=Math.hypot(cx,cy);
+   if(!best||d<best.d)best={d,st,i,t};
+  }});
+ return best;}
+function segLen(st,i){return hav(st.way[i],st.way[i+1]);}
+function gpsInfo(pos){
+ const n=nearestOnRoute(pos);if(!n)return null;
+ const st=n.st,g=GPSE[st.id];
+ let endIdx=st.way.length-1,target=st.to;
+ if(g.mid&&n.i<g.mid.i){endIdx=g.mid.i;target=g.mid.name;}
+ let dist=(1-n.t)*segLen(st,n.i);
+ for(let j=n.i+1;j<endIdx;j++)dist+=segLen(st,j);
+ const e0=g.el[n.i]+(g.el[n.i+1]-g.el[n.i])*n.t;
+ let up=0,dn=0,prev=e0;
+ for(let j=n.i+1;j<=endIdx;j++){const dl=g.el[j]-prev;if(dl>0)up+=dl;else dn-=dl;prev=g.el[j];}
+ return{n,st,target,dist,up,dn};}
+let gpsWatch=null,gpsMarker=null,gpsRing=null;
+function drawGpsMarker(pos,acc){
+ if(lmap&&leaflet){
+  if(!gpsTopoM){gpsTopoM=leaflet.circleMarker(pos,{radius:7,color:"#FFFFFF",weight:2.5,fillColor:"#2E5E9E",fillOpacity:1}).addTo(lmap);
+   gpsTopoRing=leaflet.circle(pos,{radius:acc||30,color:"#2E5E9E",weight:1,fillColor:"#2E5E9E",fillOpacity:0.12}).addTo(lmap);}
+  else{gpsTopoM.setLatLng(pos);gpsTopoRing.setLatLng(pos);gpsTopoRing.setRadius(acc||30);}}
+ const svg=document.querySelector("#mapbox svg");if(!svg)return;
+ const inB=pos[0]>=B.minLat&&pos[0]<=B.maxLat&&pos[1]>=B.minLon&&pos[1]<=B.maxLon;
+ if(!inB){if(gpsMarker){gpsMarker.remove();gpsMarker=null;}if(gpsRing){gpsRing.remove();gpsRing=null;}return;}
+ const NS="http://www.w3.org/2000/svg",x=X(pos[1]),y=Y(pos[0]);
+ const pxPerM=W/((B.maxLon-B.minLon)*111320*Math.cos(47*Math.PI/180));
+ if(!gpsRing){gpsRing=document.createElementNS(NS,"circle");
+  gpsRing.setAttribute("fill","#2E5E9E");gpsRing.setAttribute("opacity","0.15");
+  gpsRing.setAttribute("stroke","#2E5E9E");gpsRing.setAttribute("stroke-width","1");svg.appendChild(gpsRing);}
+ gpsRing.setAttribute("cx",x);gpsRing.setAttribute("cy",y);
+ gpsRing.setAttribute("r",Math.max(6,Math.min(80,(acc||30)*pxPerM)));
+ if(!gpsMarker){gpsMarker=document.createElementNS(NS,"circle");
+  gpsMarker.setAttribute("r","7");gpsMarker.setAttribute("fill","#2E5E9E");
+  gpsMarker.setAttribute("stroke","#FFFFFF");gpsMarker.setAttribute("stroke-width","2.5");svg.appendChild(gpsMarker);}
+ gpsMarker.setAttribute("cx",x);gpsMarker.setAttribute("cy",y);}
+function gpsPanel(html){const p=document.getElementById("gpspanel");
+ p.style.display=html?"block":"none";p.innerHTML=html||"";}
+let lastFix=null,demoMode=false;
+function fmt10(v){return Math.round(v/10)*10;}
+function renderFix(pos,acc,isDemo){
+ drawGpsMarker(pos,acc);
+ const inB=pos[0]>=B.minLat&&pos[0]<=B.maxLat&&pos[1]>=B.minLon&&pos[1]<=B.maxLon;
+ if(!inB){gpsPanel('<span class="gp-state na">Outside the map sheet</span>'+
+  '<div class="gp-body"><div class="gp-sub">No trail data at this position · GPS ±'+Math.round(acc)+' m</div>'+
+  '<div class="gp-sub" style="margin-top:4px"><a href="#" onclick="gpsDemo();return false">Preview the on-trail display</a></div></div>');return;}
+ const info=gpsInfo(pos);if(!info){gpsPanel("No route data.");return;}
+ const off=Math.round(info.n.d),km=(info.dist/1000).toFixed(1);
+ const head=off<=CORRIDOR
+  ?'<span class="gp-state ok">On route · stage '+info.st.id+' · '+off+' m from line'+(isDemo?' · demo':'')+'</span>'
+  :'<span class="gp-state off">Off corridor · '+off+' m from stage '+info.st.id+(isDemo?' · demo':'')+'</span>';
+ gpsPanel(head+'<div class="gp-body"><div class="gp-target">&rarr; '+info.target+'</div>'+
+  '<div class="gp-big">'+km+' km &middot; +'+fmt10(info.up)+' m / &minus;'+fmt10(info.dn)+' m</div>'+
+  '<div class="gp-sub">GPS ±'+Math.round(acc)+' m · coarse estimate, not navigation'+
+  (isDemo?' · <a href="#" onclick="gpsDemoOff();return false">exit demo</a>':'')+'</div></div>');}
+function onGpsFix(f){lastFix=[f.coords.latitude,f.coords.longitude];
+ if(demoMode)return;
+ renderFix(lastFix,f.coords.accuracy||30,false);}
+function gpsDemo(){demoMode=true;renderFix([47.0128,11.7818],18,true);}
+function gpsDemoOff(){demoMode=false;
+ if(gpsMarker){gpsMarker.remove();gpsMarker=null;}if(gpsRing){gpsRing.remove();gpsRing=null;}
+ if(lastFix&&gpsWatch!==null)renderFix(lastFix,30,false);else gpsPanel("");}
+function onGpsErr(e){
+ gpsPanel('<span class="gp-state na">GPS unavailable</span>'+
+  '<div class="gp-body"><div class="gp-sub">Allow location access for this page — works best over https; some browsers block local files.</div>'+
+  '<div class="gp-sub" style="margin-top:4px"><a href="#" onclick="gpsDemo();return false">Preview the on-trail display</a></div></div>');}
+function toggleGps(){
+ const btn=document.getElementById("btnGps");
+ if(gpsWatch!==null){navigator.geolocation.clearWatch(gpsWatch);gpsWatch=null;demoMode=false;
+  btn.textContent="GPS: off";btn.classList.remove("act");gpsPanel("");
+  if(gpsMarker){gpsMarker.remove();gpsMarker=null;}if(gpsRing){gpsRing.remove();gpsRing=null;}
+  if(gpsTopoM){gpsTopoM.remove();gpsTopoM=null;}if(gpsTopoRing){gpsTopoRing.remove();gpsTopoRing=null;}return;}
+ if(!("geolocation" in navigator)){gpsPanel("This browser has no geolocation support.");return;}
+ demoMode=false;
+ btn.textContent="GPS: on";btn.classList.add("act");
+ gpsPanel("Waiting for GPS fix…");
+ gpsWatch=navigator.geolocation.watchPosition(onGpsFix,onGpsErr,
+  {enableHighAccuracy:true,maximumAge:15000,timeout:20000});}
+
+/* ═══════════════ INIT ═══════════════ */
+(async function(){
+  await load();
+  document.getElementById("startDate").value=S.start;
+  document.getElementById("tglMh").checked=S.mh;
+  buildMap();renderPack();renderAll();
+  document.getElementById("startDate").addEventListener("change",e=>{S.start=e.target.value;save();renderAll();});
+  document.getElementById("tglMh").addEventListener("change",e=>{S.mh=e.target.checked;save();renderAll();});
+  document.getElementById("btnTopo").addEventListener("click",showTopo);
+  document.getElementById("btnSvg").addEventListener("click",showSvg);
+  document.getElementById("btnGps").addEventListener("click",toggleGps);
+  document.getElementById("btnCtr").addEventListener("click",()=>{
+    const topoOn=document.getElementById("topobox").classList.contains("on");
+    if(topoOn&&lmap){
+      if(lastFix&&gpsWatch!==null)lmap.setView(lastFix,14);
+      else if(routeBounds)lmap.fitBounds(routeBounds,{padding:[24,24]});
+    }else{note("Sheet map already shows the full route.");setTimeout(()=>note(""),2500);}
+  });
+})();
+</script>
+</body>
+</html>

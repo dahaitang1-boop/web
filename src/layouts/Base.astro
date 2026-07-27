@@ -1,0 +1,136 @@
+---
+import '../styles/tokens.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Omit on the homepage so the <title> is not "Dahai Tang — Dahai Tang". */
+  bare?: boolean;
+}
+
+const { title, description, bare = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const fullTitle = bare ? title : `${title} — Dahai Tang`;
+
+const nav = [
+  { href: '/', label: 'index' },
+  { href: '/projects/', label: 'systems' },
+  { href: '/about/', label: 'about' },
+];
+const here = Astro.url.pathname;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="wrap site-head">
+      <a class="mark mono" href="/">dahai<span>.</span>tang</a>
+      <nav aria-label="Primary">
+        {
+          nav.map((n) => (
+            <a
+              class="mono navlink"
+              href={n.href}
+              aria-current={here === n.href ? 'page' : undefined}
+            >
+              {n.label}
+            </a>
+          ))
+        }
+      </nav>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="wrap site-foot">
+      <hr class="rule-double" />
+      <div class="foot-grid">
+        <p class="k">Dahai Tang · Berlin, Germany</p>
+        <ul class="chips">
+          <li><a class="chip" href="mailto:dahai.tang1@gmail.com">e-mail</a></li>
+          <li>
+            <a class="chip" href="https://github.com/dahaitang1-boop" rel="me noopener">github</a>
+          </li>
+          <li><a class="chip" href="/about/">about</a></li>
+        </ul>
+      </div>
+      <p class="k foot-note">
+        Static site, no analytics, no cookies. Built with Astro.
+      </p>
+    </footer>
+
+    <style>
+      .site-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-block: 1.5rem 0;
+        flex-wrap: wrap;
+      }
+      .mark {
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        text-decoration: none;
+      }
+      .mark span {
+        color: var(--accent);
+      }
+      nav {
+        display: flex;
+        gap: 1.25rem;
+      }
+      .navlink {
+        font-size: 0.78rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        text-decoration: none;
+      }
+      .navlink:hover,
+      .navlink[aria-current='page'] {
+        color: var(--accent);
+      }
+      .site-foot {
+        padding-block: 3rem 4rem;
+      }
+      .foot-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .foot-note {
+        margin-top: 1.5rem;
+        color: var(--muted);
+      }
+      .chip {
+        text-decoration: none;
+        color: var(--ink-dim);
+      }
+      .chip:hover {
+        border-color: var(--accent);
+        color: var(--accent-deep);
+      }
+    </style>
+  </body>
+</html>

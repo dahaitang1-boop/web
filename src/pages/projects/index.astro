@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import SystemList from '../../components/SystemList.astro';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base
+  title="Systems"
+  description="Six systems built to run one person's life: news intake, job search, document and deadline admin, finance, trek planning, memoir."
+>
+  <section class="wrap head">
+    <h1 class="disp">Systems</h1>
+    <p class="lede">
+      Six of them. Each solves a problem I actually had, and each is still in use.
+    </p>
+  </section>
+
+  <section class="wrap">
+    <SystemList projects={projects} />
+  </section>
+</Base>
+
+<style>
+  .head {
+    padding-block: 2.5rem 0;
+  }
+</style>

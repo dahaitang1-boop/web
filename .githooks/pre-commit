@@ -1,0 +1,8 @@
+#!/bin/sh
+# Installed with:  git config core.hooksPath .githooks
+# NOTE: core.hooksPath is local config and does NOT follow a clone — run that
+# command once per fresh clone. CI and the build script cover the gap.
+#
+# This is the convenience layer only. The real gate is in package.json's
+# build script, which Cloudflare runs -- so `--no-verify` buys nothing.
+exec python3 "$(git rev-parse --show-toplevel)/scripts/scan_secrets.py" --staged

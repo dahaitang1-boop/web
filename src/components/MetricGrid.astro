@@ -1,0 +1,114 @@
+---
+interface Metric {
+  label: string;
+  value: string;
+  note?: string;
+}
+interface Props {
+  metrics: Metric[];
+}
+const { metrics } = Astro.props;
+---
+
+<dl class="metrics">
+  {
+    metrics.map((m) => (
+      <div class="metric">
+        <dt class="k">{m.label}</dt>
+        <dd>
+          <span class="val mono" data-count={m.value}>
+            {m.value}
+          </span>
+          {m.note && <span class="note">{m.note}</span>}
+        </dd>
+      </div>
+    ))
+  }
+</dl>
+
+<script>
+  // Count leading integers up on first view. Purely decorative: the final
+  // value is already in the DOM, so this degrades to "nothing happens".
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const el = e.target as HTMLElement;
+          io.unobserve(el);
+          const final = el.dataset.count ?? '';
+          const m = final.match(/^(\D*)(\d[\d,]*)(.*)$/s);
+          if (!m) continue;
+          const [, pre, digits, post] = m;
+          const target = Number(digits.replace(/,/g, ''));
+          if (!Number.isFinite(target) || target === 0) continue;
+          const start = performance.now();
+          const dur = 650;
+          let done = false;
+          const settle = () => {
+            done = true;
+            el.textContent = final;
+          };
+          const tick = (now: number) => {
+            if (done) return;
+            const t = Math.min(1, (now - start) / dur);
+            const eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = pre + Math.round(target * eased).toLocaleString('en-US') + post;
+            if (t < 1) requestAnimationFrame(tick);
+            else settle();
+          };
+          requestAnimationFrame(tick);
+          // Safety net. rAF is paused while the tab is hidden, which strands
+          // the number at a wrong value ("1 systems" instead of "6") for as
+          // long as the tab stays in the background. setTimeout still fires,
+          // so the correct figure always wins.
+          setTimeout(settle, dur + 400);
+        }
+      },
+      { rootMargin: '0px 0px -15% 0px' }
+    );
+    document.querySelectorAll<HTMLElement>('.val[data-count]').forEach((el) => io.observe(el));
+  }
+</script>
+
+<style>
+  /* Separate cards, not a ruled table: a wrapping flex row grows the last
+     cards to fill their line, so an odd count never leaves a hole. */
+  .metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 2rem 0;
+    padding: 0;
+  }
+  .metric {
+    flex: 1 1 12rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.1rem 1.25rem 1.25rem;
+  }
+  dt {
+    margin-bottom: 0.4rem;
+  }
+  dd {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .val {
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+  .note {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+</style>

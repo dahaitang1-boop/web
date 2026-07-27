@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[ROUTE NAME] — Emergency Card</title>
+<style>
+  :root{--ink:#1A231F;--red:#B32B2B;--soft:#5A635C;--line:#B9B4A2;--paper:#F2F0E7}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#DDD9CB;color:var(--ink);
+    font:13px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:18px}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .sheet{max-width:820px;margin:0 auto;background:var(--paper);border:2.5px solid var(--ink);
+    padding:22px 26px}
+  header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px;
+    border-bottom:3px double var(--ink);padding-bottom:10px;margin-bottom:14px}
+  h1{font-size:19px;text-transform:uppercase;letter-spacing:.16em;
+    font-family:"Avenir Next Condensed","Arial Narrow",system-ui,sans-serif}
+  header .sub{font-size:11px;color:var(--soft)}
+  h2{font-size:11.5px;text-transform:uppercase;letter-spacing:.12em;margin:0 0 7px;color:var(--soft)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+  .box{border:1.2px solid var(--ink);padding:10px 12px;background:#FAF8F1}
+  .big{display:flex;gap:14px;margin-bottom:14px}
+  .big .num{flex:1;border:2.5px solid var(--red);background:#FAF8F1;text-align:center;padding:10px 6px}
+  .big .num b{display:block;font-size:34px;line-height:1;color:var(--red);
+    font-family:ui-monospace,monospace}
+  .big .num span{font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th,td{border-bottom:1px solid var(--line);padding:4px 6px 4px 0;text-align:left;vertical-align:top}
+  th{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--soft)}
+  td.mono{white-space:nowrap}
+  ul{list-style:none;font-size:12px}
+  li{padding:2.5px 0;border-bottom:1px dashed var(--line)}
+  li:last-child{border-bottom:none}
+  .fill{display:flex;gap:8px;align-items:baseline;padding:4px 0;font-size:12px}
+  .fill span{color:var(--soft);flex:none}
+  .fill i{flex:1;border-bottom:1px solid var(--ink);min-height:15px;font-style:normal}
+  .sig{display:flex;gap:10px;align-items:center;padding:6px 0}
+  .sig .k{flex:none;width:120px;font-weight:600}
+  .foot{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);
+    font-size:10px;color:var(--soft)}
+  .mt{margin-top:14px}
+  .printbtn{display:block;margin:14px auto 0;padding:9px 22px;font:600 13px system-ui;
+    border:2px solid var(--ink);background:#FAF8F1;cursor:pointer}
+  @media print{
+    body{background:#fff;padding:0;font-size:11.5px}
+    .sheet{max-width:none;border-width:2px;padding:8mm 10mm}
+    .printbtn{display:none}
+    .box{background:#fff}
+    .big .num{background:#fff}
+    @page{size:A4;margin:8mm}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header>
+    <h1>Emergency card — [ROUTE NAME]</h1>
+    <div class="sub">[RANGE] · [REGION, COUNTRY] · [SEASON] · print &amp; carry in the pack lid</div>
+  </header>
+
+  <div class="big">
+    <div class="num"><b>[NNN]</b><span>[NATIONAL MOUNTAIN RESCUE]</span></div>
+    <div class="num"><b>112</b><span>EU emergency — works on any network</span></div>
+  </div>
+
+  <div class="grid">
+    <div class="box">
+      <h2>Card holder</h2>
+      <div class="fill"><span>Name</span><i></i></div>
+      <div class="fill"><span>Date of birth</span><i></i></div>
+      <div class="fill"><span>DAV member no.</span><i></i></div>
+      <div class="fill"><span>Health insurance</span><i></i></div>
+      <div class="fill"><span>Emergency contact</span><i></i></div>
+      <div class="fill"><span>Allergies / meds</span><i></i></div>
+      <div class="fill"><span>Blood type</span><i></i></div>
+    </div>
+
+    <div class="box">
+      <h2>Alpine distress signal (no phone signal)</h2>
+      <div class="sig"><span class="k">Call for help</span>
+        <span>6 signals per minute (whistle, torch, waving) · 1 min pause · repeat</span></div>
+      <div class="sig"><span class="k">Answer</span>
+        <span>3 signals per minute</span></div>
+      <div class="sig"><span class="k">Helicopter Y/N</span>
+        <span>Both arms up = YES, need help · one arm up, one down = NO</span></div>
+      <div class="sig"><span class="k">112 tip</span>
+        <span>No bars on your network? Dial 112 anyway — it uses any available carrier. Phone in flight mode saves battery between attempts.</span></div>
+    </div>
+  </div>
+
+  <div class="box mt">
+    <h2>Hut phones — call ahead if delayed, injured, or cancelling a bed</h2>
+    <table>
+      <tr><th>Hut</th><th>Elev.</th><th>Phone</th><th>Hut</th><th>Elev.</th><th>Phone</th></tr>
+      <tr><td>[Hut 1]</td><td>[m]</td><td class="mono">[+CC ...]</td>
+          <td>[Hut 5]</td><td>[m]</td><td class="mono">[+CC ...]</td></tr>
+      <tr><td>[Hut 2]</td><td>[m]</td><td class="mono">[+CC ...]</td>
+          <td>[Hut 6]</td><td>[m]</td><td class="mono">[+CC ...]</td></tr>
+      <tr><td>[Hut 3]</td><td>[m]</td><td class="mono">[+CC ...]</td>
+          <td>[Hut 7]</td><td>[m]</td><td class="mono">[+CC ...]</td></tr>
+      <tr><td>[Hut 4]</td><td>[m]</td><td class="mono">[+CC ...]</td>
+          <td>[Backup / valley]</td><td>[m]</td><td class="mono">[+CC ...]</td></tr>
+      <tr><td>[Park / info office]</td><td>—</td><td class="mono">[+CC ...]</td>
+          <td>[Local taxi]</td><td>—</td><td class="mono">[+CC ...]</td></tr>
+    </table>
+  </div>
+
+  <div class="box mt">
+    <h2>Escape routes — bad weather / injury descent per stage</h2>
+    <table>
+      <tr><th>From</th><th>Descent</th><th>Time</th><th>Transport at the bottom</th></tr>
+      <tr><td>[Hut, stages n–n]</td><td>[descent to ...]</td><td class="mono">[h]</td><td>[bus / taxi line]</td></tr>
+      <tr><td>[Hut, stages n–n]</td><td>[descent to ...]</td><td class="mono">[h]</td><td>[bus / taxi line]</td></tr>
+      <tr><td>[Hut, stages n–n]</td><td>[descent to ...]</td><td class="mono">[h]</td><td>[bus / taxi line]</td></tr>
+      <tr><td>[Hut, stages n–n]</td><td>[descent to ...]</td><td class="mono">[h]</td><td>[bus / taxi line]</td></tr>
+      <tr><td>[Committing stage]</td><td><b>None</b> — [bivouac shelter is emergency only]</td><td class="mono">—</td><td>Decide at [hut] the evening before</td></tr>
+      <tr><td>[Final hut]</td><td>[lift / descent]</td><td class="mono">[h]</td><td>[lift name]</td></tr>
+    </table>
+  </div>
+
+  <div class="grid mt">
+    <div class="box">
+      <h2>Transport lifelines · summer 2026</h2>
+      <ul>
+        <li><b>[Bus line]</b> [valley route] · runs [season dates] · [frequency]</li>
+        <li><b>[Bus line]</b> [trailhead route] · [frequency]</li>
+        <li><b>[Cable car]</b> [season dates] · [hours] · [interval]</li>
+        <li><b>[Shuttle / taxi]</b> [valley] from [hut]</li>
+        <li><b>[Rail]</b> [nearest station] → [hub] → home</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h2>Storm &amp; cold — quick protocol</h2>
+      <ul>
+        <li><b>Thunderstorm:</b> off ridges, summits, and cable sections immediately; away from summit crosses and lone boulders; crouch on the pack, feet together; spread out if in a group</li>
+        <li><b>Fresh snow / fog on a pass:</b> do not cross — return to the last hut; the Hüttenwirt's advice overrides the plan</li>
+        <li><b>Hypothermia signs</b> (stumbling, slurring, confusion): stop, insulate, sugar + warm drink, call 140 early — do not push on</li>
+        <li><b>Injured &amp; immobile:</b> insulate from the ground first, then call; if no signal, distress signal + send the strongest walker to the nearest hut</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="foot">
+    [Alpine club] members: rescue-cost cover included — carry the membership card.
+    Verify every number before departure; compiled [date] from hut and transport operator sources.
+    This card supplements — never replaces — [paper map sheet], offline GPX, and your own judgement.
+  </div>
+</div>
+<button class="printbtn" onclick="window.print()">Print this card</button>
+</body>
+</html>

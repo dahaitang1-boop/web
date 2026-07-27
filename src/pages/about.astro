@@ -1,0 +1,75 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="About"
+  description="Dahai Tang — engineer in Berlin. Previously TikTok Berlin, 2021–2025."
+>
+  <article class="wrap">
+    <header class="head">
+      <p class="k">Berlin, Germany</p>
+      <h1 class="disp">About</h1>
+    </header>
+
+    <div class="prose">
+      <p>
+        I'm an engineer in Berlin. I spent four and a half years at TikTok's
+        Berlin office, from April 2021 to September 2025.
+      </p>
+
+      <p>
+        The projects on this site all come from the same habit: when a part of
+        my own life got complicated enough to keep dropping things, I built the
+        smallest system that would hold it. A morning briefing that scores news
+        against rubrics instead of a single relevance score. A constraint solver
+        for alpine hut bookings. A deadline registry that renders itself into a
+        single static page with no server behind it.
+      </p>
+
+      <p>
+        Building for exactly one known user is a strange constraint and a
+        clarifying one. There is no persona to design against and no roadmap to
+        hide behind — the tool either survives contact with the actual week or
+        it gets deleted. Most of what I would defend in these write-ups comes
+        from that: the failure modes I chose to make loud, the numbers I record
+        instead of a yes/no, the things I deliberately did not automate.
+      </p>
+
+      <h2>How this site is built</h2>
+
+      <p>
+        Astro, no analytics, no cookies, deployed as static files. The
+        interactive artifacts are published as the original single HTML files
+        rather than ported into components — they were designed to be
+        downloaded and opened offline, and that property is the point.
+      </p>
+
+      <p>
+        Because the source material lives alongside genuinely private records,
+        every build runs a scanner first: a deny-by-default pass over the whole
+        tree that fails the build on booking numbers, identity numbers,
+        credentials and a short list of things that must never be published.
+        Anything legitimately public — a mountain hut's own phone number — is
+        allowlisted individually, with a written reason. The check is wired into
+        the build script itself, so skipping the commit hook doesn't skip the
+        gate.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        <a href="mailto:dahai.tang1@gmail.com">dahai.tang1@gmail.com</a> ·
+        <a href="https://github.com/dahaitang1-boop" rel="me noopener">GitHub</a>
+      </p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  article {
+    padding-block: 2.5rem;
+  }
+  .head h1 {
+    margin-top: 0.5rem;
+  }
+</style>
