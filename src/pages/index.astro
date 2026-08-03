@@ -21,7 +21,10 @@ const headline = [
   {
     label: 'Written up',
     value: String(published),
-    note: 'the rest are in use but not yet documented',
+    note:
+      published === projects.length
+        ? 'all of them, including the failures worth keeping'
+        : 'the rest are in use but not yet documented',
   },
 ];
 ---

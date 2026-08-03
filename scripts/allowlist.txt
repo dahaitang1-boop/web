@@ -37,6 +37,12 @@
 140               # Austrian mountain rescue emergency number
 112               # European emergency number
 
+# --- Public product names ---------------------------------------------------
+# "Flex Query" is the public, documented name of an IBKR reporting feature —
+# it appears in their own docs. The brokerage rule is aimed at the credentials
+# (queryId, token=…) and the account id pattern, all of which still fire.
+Flex Query        # IBKR's public feature name, used in the finanz-cockpit write-up
+
 # --- Physical constants -----------------------------------------------------
 6371000           # Earth mean radius in metres — haversine distance in planner.html
 
