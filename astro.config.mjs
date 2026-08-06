@@ -1,13 +1,15 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import { WIP } from './src/config.ts';
 
 // https://astro.build/config
 export default defineConfig({
-  // Must be set before anything ships: canonical URLs and the sitemap both
-  // silently no-op without it. Change this when the real domain is bought.
   site: 'https://dahaitang.com',
-  integrations: [sitemap()],
+  // No sitemap while the site is unfinished: a sitemap is a public directory
+  // of exactly the URLs that are meant to be unlisted for now. Re-enable it
+  // together with the WIP flag in src/config.ts.
+  integrations: WIP ? [] : [sitemap()],
   build: {
     // Emit /about/index.html rather than /about.html so URLs have no extension.
     format: 'directory',

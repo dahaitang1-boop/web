@@ -1,0 +1,7 @@
+# The site is unfinished. Case-study pages remain reachable by direct link so
+# they can be shared by hand, but they should not be crawled or surfaced in
+# search results yet. Every page also carries a noindex meta tag.
+#
+# Relaunch: delete this file and flip WIP in src/config.ts.
+User-agent: *
+Disallow: /

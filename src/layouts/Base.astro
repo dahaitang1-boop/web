@@ -1,16 +1,26 @@
 ---
 import '../styles/tokens.css';
+import { WIP } from '../config';
 
 interface Props {
   title: string;
   description: string;
   /** Omit on the homepage so the <title> is not "Dahai Tang — Dahai Tang". */
   bare?: boolean;
+  /** Force noindex on a single page. While WIP, every page is noindex anyway. */
+  noindex?: boolean;
+  /** Hide the header navigation. Implied by WIP. */
+  minimal?: boolean;
 }
 
-const { title, description, bare = false } = Astro.props;
+const { title, description, bare = false, noindex = false, minimal = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const fullTitle = bare ? title : `${title} — Dahai Tang`;
+
+// While the site is unfinished the case studies stay reachable by direct link
+// but must not be crawled, and nothing on the page may link onward to them.
+const hideNav = WIP || minimal;
+const blockIndexing = WIP || noindex;
 
 const nav = [
   { href: '/', label: 'index' },
@@ -26,6 +36,7 @@ const here = Astro.url.pathname;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {blockIndexing && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta property="og:type" content="website" />
@@ -39,19 +50,21 @@ const here = Astro.url.pathname;
 
     <header class="wrap site-head">
       <a class="mark" href="/" aria-label="Dahai Tang — home">Dahai Tang<span>.</span></a>
-      <nav aria-label="Primary">
-        {
-          nav.map((n) => (
-            <a
-              class="mono navlink"
-              href={n.href}
-              aria-current={here === n.href ? 'page' : undefined}
-            >
-              {n.label}
-            </a>
-          ))
-        }
-      </nav>
+      {
+        !hideNav && (
+          <nav aria-label="Primary">
+            {nav.map((n) => (
+              <a
+                class="mono navlink"
+                href={n.href}
+                aria-current={here === n.href ? 'page' : undefined}
+              >
+                {n.label}
+              </a>
+            ))}
+          </nav>
+        )
+      }
     </header>
 
     <main id="main">
@@ -67,7 +80,13 @@ const here = Astro.url.pathname;
           <li>
             <a class="chip" href="https://github.com/dahaitang1-boop" rel="me noopener">github</a>
           </li>
-          <li><a class="chip" href="/about/">about</a></li>
+          {!hideNav && (
+            <li>
+              <a class="chip" href="/about/">
+                about
+              </a>
+            </li>
+          )}
         </ul>
       </div>
       <p class="k foot-note">
