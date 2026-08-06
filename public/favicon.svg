@@ -1,5 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#faf9f5"/>
-  <rect x="1" y="1" width="62" height="62" rx="13" fill="none" stroke="#e5e1d8" stroke-width="2"/>
-  <text x="32" y="44" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="36" font-weight="500" fill="#c15f3c">dt</text>
+  <!-- Monogram from the brand spec: "dt." on brand paper, terracotta stop.
+       Letterforms are drawn as paths so the icon never depends on a font
+       being available (SVG favicons do not load web fonts). -->
+  <rect width="64" height="64" rx="13" fill="#EEECE2"/>
+  <g fill="#191919">
+    <!-- d -->
+    <path d="M25.6 14.4h6.2v35.2h-5.8v-3.3c-1.6 2.5-4.1 3.9-7.3 3.9-6.4 0-10.9-5.2-10.9-13.1s4.5-13.1 10.9-13.1c3.1 0 5.5 1.3 7.1 3.6V14.4h-.2zm-5.6 30.2c3.6 0 6-2.9 6-7.5s-2.4-7.5-6-7.5-6 2.9-6 7.5 2.4 7.5 6 7.5z"/>
+    <!-- t -->
+    <path d="M38.3 24.6h4.3v-6.9h5.9v6.9h5.4v5.2h-5.4v11.4c0 2.3.9 3.2 3 3.2.9 0 1.7-.1 2.4-.3v5.2c-1.2.3-2.6.5-4.1.5-4.9 0-7.2-2.4-7.2-7.4V29.8h-4.3v-5.2z"/>
+  </g>
+  <circle cx="58" cy="46" r="4" fill="#CC785C"/>
 </svg>

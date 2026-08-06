@@ -3,21 +3,48 @@
    embedded artifacts (paper-coloured topo planner) share the same family,
    so site and artifact read as one continuous document. */
 
+/* Archivo ExtraBold — the brand face. SIL Open Font License 1.1, free for
+   commercial use including logos, no attribution required.
+   Self-hosted deliberately: hot-linking fonts.googleapis.com from a public
+   site run by a German resident transmits visitor IP addresses to Google and
+   was held to breach the GDPR (LG München I, 20 Jan 2022, 3 O 17493/20).
+   This file is Google's own Latin subset, 14 KB. No unicode-range descriptor:
+   its only job is to skip the download on pages with no Latin glyphs, and
+   every page here is Latin, so it would buy nothing — while its U+XXXX-XXXX
+   syntax reads exactly like a phone number to the secret scanner. */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/archivo-800-latin.woff2') format('woff2');
+}
+
+/* Brand palette comes from the logo specification:
+   ink #191919 · paper #EEECE2 · terracotta full stop #CC785C.
+   The full stop is the only ornament in the identity — never add another. */
+
 :root {
   --bg: #faf9f5; /* page — warm ivory */
-  --bg-deep: #f0eee6; /* alternate bands, code, wells */
+  --bg-deep: #eeece2; /* brand paper: bands, code wells, callouts */
   --surface: #ffffff;
-  --border: #e5e1d8;
-  --border-strong: #cfc9bc;
+  --border: #e3dfd4;
+  --border-strong: #cbc5b6;
 
-  --ink: #1f1e1d;
-  --ink-dim: #52504a;
+  --ink: #191919; /* brand ink */
+  --ink-dim: #4f4d48;
   --muted: #6e6b64;
 
-  --accent: #c15f3c; /* terracotta — links, figures, emphasis */
-  --accent-deep: #9c4a2f; /* hover state */
+  --accent: #cc785c; /* brand terracotta — the full stop, links, figures */
+  --accent-deep: #a4553b; /* hover state */
   --alert: #b3261e;
 
+  /* Archivo is the brand face (SIL OFL). Self-hosted in /fonts — never
+     hot-linked from Google Fonts: serving a German-resident public site
+     from fonts.googleapis.com passes visitor IPs to Google and has been
+     held to breach the GDPR (LG München I, 20 Jan 2022, 3 O 17493/20). */
+  --brand: Archivo, 'Helvetica Neue', 'Arial Narrow', Helvetica, Arial,
+    sans-serif;
   --serif: ui-serif, 'Iowan Old Style', 'Palatino Nova', Palatino, Georgia,
     'Times New Roman', serif;
   --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto,
