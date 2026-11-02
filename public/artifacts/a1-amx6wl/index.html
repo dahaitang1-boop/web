@@ -31,7 +31,8 @@
   --bg: #12161c; --paper: #1b2129; --ink: #e6ebf1; --muted: #9aa7b6; --line: #2d3641;
   --accent: #8aa6f2; --accent-soft: #233050; --stamp: #f08a7e; --good: #6fd19b; color-scheme: dark; }
 
-body { background: var(--bg); color: var(--ink); font: 17px/1.5 var(--body); }
+[hidden] { display: none !important; } /* the standalone copies have no reset that does this */
+body { background: var(--bg); color: var(--ink); font: 17px/1.5 var(--body); margin: 0; }
 .wrap { max-width: 720px; margin: 0 auto; padding-block: 20px 56px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px; }
