@@ -143,7 +143,7 @@ footer { color: var(--muted); font-size: 0.85rem; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
 /* Easter egg: a chubby pig pops up, blows a kiss, lips float away */
-.pig { position: fixed; z-index: 50; width: 110px; pointer-events: none; transform-origin: 50% 100%;
+.pig { position: fixed; z-index: 50; width: 130px; pointer-events: none; transform-origin: 50% 100%;
   animation: pigPop 2.1s cubic-bezier(.3,1.4,.5,1) both; }
 .pig .lean { transform-origin: 50% 90%; animation: pigLean 2.1s ease-in-out both; }
 .pig .lips { transform-box: fill-box; transform-origin: center; animation: pigLips 2.1s ease-in-out both; }
@@ -696,35 +696,38 @@ $("#msgCard").addEventListener("click", e => {
 });
 
 /* Easter egg: ~1 in 7 button taps, a pig blows a kiss (at most once every 5 s) */
-const PIG_SVG = `<svg viewBox="0 0 120 130" aria-hidden="true"><g class="lean">
-  <ellipse cx="24" cy="30" rx="14" ry="18" transform="rotate(-25 24 30)" fill="#f7a6ba" stroke="#c45f7a" stroke-width="3"/>
-  <ellipse cx="96" cy="30" rx="14" ry="18" transform="rotate(25 96 30)" fill="#f7a6ba" stroke="#c45f7a" stroke-width="3"/>
-  <ellipse cx="60" cy="66" rx="46" ry="42" fill="#ffc6d2" stroke="#c45f7a" stroke-width="3"/>
-  <path d="M26 104 Q60 122 94 104 L98 116 Q60 132 22 116 Z" fill="#e23b3b" stroke="#a82424" stroke-width="2.5"/>
-  <ellipse cx="28" cy="80" rx="9" ry="6" fill="#ff8aa5" opacity=".6"/>
-  <ellipse cx="92" cy="80" rx="9" ry="6" fill="#ff8aa5" opacity=".6"/>
-  <g class="open">
-    <ellipse cx="43" cy="56" rx="11" ry="13" fill="#fff" stroke="#c45f7a" stroke-width="2"/>
-    <ellipse cx="77" cy="56" rx="11" ry="13" fill="#fff" stroke="#c45f7a" stroke-width="2"/>
-    <circle cx="46" cy="58" r="7" fill="#3a1d24"/><circle cx="74" cy="58" r="7" fill="#3a1d24"/>
-    <circle cx="48" cy="55" r="2.4" fill="#fff"/><circle cx="76" cy="55" r="2.4" fill="#fff"/>
+/* Sticker style: flat pink, thick black outline, a huge snout in the middle of the face */
+const PIG_SVG = `<svg viewBox="0 0 140 140" aria-hidden="true"><g class="lean" stroke="#1e1a1b" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M30 44 L22 14 Q24 8 31 11 L55 30 Z" fill="#f9b8c4"/>
+  <path d="M110 44 L118 14 Q116 8 109 11 L85 30 Z" fill="#f9b8c4"/>
+  <path d="M31 36 L27 20 L42 31" fill="#f48ea3" stroke-width="2"/>
+  <path d="M109 36 L113 20 L98 31" fill="#f48ea3" stroke-width="2"/>
+  <path d="M18 72 Q16 28 70 26 Q124 28 122 72 Q124 120 70 122 Q16 120 18 72 Z" fill="#fdd3d9"/>
+  <g stroke="none" fill="#f6909f" opacity=".75"><ellipse cx="29" cy="88" rx="11" ry="7"/><ellipse cx="111" cy="88" rx="11" ry="7"/></g>
+  <g stroke="#e8758b" stroke-width="1.8"><path d="M24 86 l3 -4 M30 87 l3 -4"/><path d="M107 86 l3 -4 M113 87 l3 -4"/></g>
+  <path d="M38 22 l-9 -7 l1 12 Z M38 22 l10 -6 l-2 12 Z" fill="#e8344a" stroke-width="2.5"/>
+  <circle cx="38" cy="22" r="3" fill="#e8344a" stroke-width="2"/>
+  <g class="open" stroke="none">
+    <ellipse cx="44" cy="58" rx="6" ry="7.5" fill="#1e1a1b"/><ellipse cx="96" cy="58" rx="6" ry="7.5" fill="#1e1a1b"/>
+    <circle cx="46" cy="55" r="2.2" fill="#fff"/><circle cx="98" cy="55" r="2.2" fill="#fff"/>
   </g>
-  <g class="shut" fill="none" stroke="#3a1d24" stroke-width="3" stroke-linecap="round">
-    <path d="M33 58 Q43 50 53 58"/><path d="M67 58 Q77 50 87 58"/>
-  </g>
-  <ellipse cx="60" cy="78" rx="17" ry="12" fill="#ff9db5" stroke="#c45f7a" stroke-width="2.5"/>
-  <ellipse cx="54" cy="78" rx="3.2" ry="4.5" fill="#a84a63"/><ellipse cx="66" cy="78" rx="3.2" ry="4.5" fill="#a84a63"/>
-  <path class="lips" d="M60 100 C52 92 50 99 56 101 C50 103 53 108 60 104 C67 108 70 103 64 101 C70 99 68 92 60 100 Z" fill="#e2304e" stroke="#a51c35" stroke-width="1.5"/>
+  <g class="shut" fill="none"><path d="M37 54 L47 59 L37 64"/><path d="M103 54 L93 59 L103 64"/></g>
+  <ellipse cx="70" cy="80" rx="30" ry="21" fill="#f7a3b3"/>
+  <ellipse cx="59" cy="80" rx="5" ry="8.5" fill="#6b2a3a" stroke="none"/>
+  <ellipse cx="81" cy="80" rx="5" ry="8.5" fill="#6b2a3a" stroke="none"/>
+  <g class="lips"><ellipse cx="70" cy="110" rx="9" ry="7" fill="#e8344a" stroke-width="2.5"/>
+    <ellipse cx="70" cy="110" rx="3.5" ry="2.5" fill="#8a1424" stroke="none"/>
+    <path d="M64 106 q2 -1.5 4 0" fill="none" stroke="#fff" stroke-width="1.6" opacity=".8"/></g>
 </g></svg>`;
 let pigLast = 0;
 function kissPig(x, y) {
-  const w = 110, left = Math.min(Math.max(8, x - w / 2), innerWidth - w - 8), top = Math.max(8, y - 150);
+  const w = 130, left = Math.min(Math.max(8, x - w / 2), innerWidth - w - 8), top = Math.max(8, y - 150);
   const pig = document.createElement("div");
   pig.className = "pig";
   pig.style.left = left + "px"; pig.style.top = top + "px";
   pig.innerHTML = PIG_SVG;
   document.body.appendChild(pig);
-  const lipX = left + w / 2, lipY = top + w * 0.8;
+  const lipX = left + w / 2, lipY = top + w * 0.78;
   [700, 1000, 1200].forEach((t, i) => setTimeout(() => {
     const s = document.createElement("span");
     s.className = "smooch"; s.textContent = "👄";
