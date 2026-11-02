@@ -129,8 +129,15 @@ textarea { min-height: 9rem; resize: vertical; line-height: 1.5; }
 .mist > div { display: grid; gap: 2px; }
 .x { color: var(--stamp); text-decoration: line-through; }
 .v { color: var(--good); font-weight: 600; }
-.links { display: grid; gap: 10px; }
-.links a { font-weight: 600; }
+.gram { display: grid; gap: 8px; }
+.gram details { background: var(--bg); }
+.gbody { display: grid; gap: 10px; padding: 0 14px 14px; min-width: 0; }
+.gbody u { text-decoration: none; border-bottom: 2px solid var(--accent); }
+.tw { overflow-x: auto; }
+.gt { border-collapse: collapse; font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+.gt th, .gt td { border: 1px solid var(--line); padding: 5px 9px; text-align: left; white-space: nowrap; }
+.gt th { font: 500 0.75rem var(--mono); color: var(--muted); }
+.gt b { color: var(--accent); }
 footer { color: var(--muted); font-size: 0.85rem; }
 @media (max-width: 420px) { nav button { font-size: 0.8rem; } .field { grid-template-columns: 1fr; } .field .hint, .fb { grid-column: 1; } .fact { grid-template-columns: 1fr; gap: 2px; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -261,7 +268,7 @@ footer { color: var(--muted); font-size: 0.85rem; }
     <div class="how">
       <h2>Exam day · read this the evening before</h2>
       <div class="steps">
-        <div><span class="lbl">On this page</span>The whole exam on one screen, the most common mistakes, and official practice tests for listening and reading.</div>
+        <div><span class="lbl">On this page</span>The whole exam on one screen, a full A1 grammar cheat sheet, and the most common mistakes.</div>
       </div>
     </div>
 
@@ -277,23 +284,128 @@ footer { color: var(--muted); font-size: 0.85rem; }
     </div>
 
     <div class="card">
-      <div class="cardtop"><span class="topic">Official practice tests (listening + reading)</span></div>
-      <div class="links">
-        <div><a href="https://bfu.goethe.de/a1_sd1/" target="_blank" rel="noopener">Online model test</a><p class="en">Works on the phone, with audio. It tells you right or wrong. Do this one first.</p></div>
-        <div><a href="https://www.goethe.de/pro/relaunch/prf/materialien/A1_sd1/sd_1_uebungssatz01.pdf" target="_blank" rel="noopener">Practice test 01 (PDF)</a><p class="en">Full paper test with answer key at the end.</p></div>
-        <div><a href="https://www.goethe.de/ins/be/de/spr/prf/gzsd1/ueb.html" target="_blank" rel="noopener">All practice materials</a><p class="en">Goethe-Institut page with the audio files for the PDF test.</p></div>
-      </div>
-    </div>
+      <div class="cardtop"><span class="topic">A1 grammar cheat sheet</span><button class="btn speak" id="gAll" type="button">Open all</button></div>
+      <div class="gram" id="gram">
 
-    <div class="card">
-      <div class="cardtop"><span class="topic">Grammar you must have</span></div>
-      <div class="patterns">
-        <div class="line"><span class="de">Ich wohne in Shanghai. · Am Wochenende sehe ich Filme.</span><span class="en">The verb is always in position 2.</span></div>
-        <div class="line"><span class="de">Wo wohnst du? · Wohnst du allein?</span><span class="en">W-question: question word + verb. Yes/no question: verb first.</span></div>
-        <div class="line"><span class="de">ich wohne · du wohnst · er/sie wohnt · wir wohnen · ihr wohnt · Sie wohnen</span><span class="en">Regular verb endings.</span></div>
-        <div class="line"><span class="de">ich bin · du bist · er ist — ich habe · du hast · er hat</span><span class="en">sein and haben.</span></div>
-        <div class="line"><span class="de">Ich habe einen Bruder. · Ich habe keinen Balkon.</span><span class="en">After haben / möchten / kaufen: der → den, ein → einen. Only masculine changes.</span></div>
-        <div class="line"><span class="de">am Montag · um 8 Uhr · im Mai · am 5. November</span><span class="en">Time words.</span></div>
+        <details><summary>1 · Word order</summary><div class="gbody">
+          <div class="line"><span class="de">Ich <u>wohne</u> in Shanghai. · Am Wochenende <u>sehe</u> ich Filme.</span><span class="en">Statement: the verb is always in position 2.</span></div>
+          <div class="line"><span class="de">Wo <u>wohnst</u> du? · <u>Wohnst</u> du allein?</span><span class="en">W-question: W-word + verb. Yes/no question: verb first.</span></div>
+          <div class="line"><span class="de">Ich <u>kann</u> gut <u>schwimmen</u>. · Ich <u>möchte</u> einen Kaffee <u>trinken</u>.</span><span class="en">Modal verb in position 2, second verb at the end.</span></div>
+          <div class="line"><span class="de">Ich <u>stehe</u> um 7 Uhr <u>auf</u>. · Der Zug <u>kommt</u> um 9 <u>an</u>.</span><span class="en">Separable verbs (aufstehen, ankommen, einkaufen, anrufen): prefix goes to the end.</span></div>
+          <div class="line"><span class="de">Ich <u>habe</u> Pizza <u>gegessen</u>.</span><span class="en">Perfect tense: haben/sein in position 2, participle at the end.</span></div>
+        </div></details>
+
+        <details><summary>2 · Verb endings</summary><div class="gbody"><div class="tw"><table class="gt">
+          <tr><th></th><th>wohnen</th><th>sein</th><th>haben</th><th>möchten</th></tr>
+          <tr><td>ich</td><td>wohn<b>e</b></td><td>bin</td><td>habe</td><td>möchte</td></tr>
+          <tr><td>du</td><td>wohn<b>st</b></td><td>bist</td><td>hast</td><td>möchtest</td></tr>
+          <tr><td>er/sie/es</td><td>wohn<b>t</b></td><td>ist</td><td>hat</td><td>möchte</td></tr>
+          <tr><td>wir</td><td>wohn<b>en</b></td><td>sind</td><td>haben</td><td>möchten</td></tr>
+          <tr><td>ihr</td><td>wohn<b>t</b></td><td>seid</td><td>habt</td><td>möchtet</td></tr>
+          <tr><td>sie/Sie</td><td>wohn<b>en</b></td><td>sind</td><td>haben</td><td>möchten</td></tr>
+        </table></div>
+          <p class="en">Verbs ending in -ten/-den add an e: du arbeit<b>e</b>st, er arbeit<b>e</b>t.</p>
+        </div></details>
+
+        <details><summary>3 · Verbs that change the vowel (du / er only)</summary><div class="gbody"><div class="tw"><table class="gt">
+          <tr><th>infinitive</th><th>du</th><th>er/sie</th></tr>
+          <tr><td>fahren</td><td>f<b>ä</b>hrst</td><td>f<b>ä</b>hrt</td></tr>
+          <tr><td>schlafen</td><td>schl<b>ä</b>fst</td><td>schl<b>ä</b>ft</td></tr>
+          <tr><td>essen</td><td><b>i</b>sst</td><td><b>i</b>sst</td></tr>
+          <tr><td>sprechen</td><td>spr<b>i</b>chst</td><td>spr<b>i</b>cht</td></tr>
+          <tr><td>nehmen</td><td>n<b>imm</b>st</td><td>n<b>imm</b>t</td></tr>
+          <tr><td>geben</td><td>g<b>i</b>bst</td><td>g<b>i</b>bt</td></tr>
+          <tr><td>lesen</td><td>l<b>ie</b>st</td><td>l<b>ie</b>st</td></tr>
+          <tr><td>sehen</td><td>s<b>ie</b>hst</td><td>s<b>ie</b>ht</td></tr>
+        </table></div></div></details>
+
+        <details><summary>4 · Modal verbs</summary><div class="gbody"><div class="tw"><table class="gt">
+          <tr><th></th><th>können</th><th>müssen</th><th>wollen</th><th>dürfen</th></tr>
+          <tr><td>ich</td><td>kann</td><td>muss</td><td>will</td><td>darf</td></tr>
+          <tr><td>du</td><td>kannst</td><td>musst</td><td>willst</td><td>darfst</td></tr>
+          <tr><td>er/sie</td><td>kann</td><td>muss</td><td>will</td><td>darf</td></tr>
+          <tr><td>wir/sie/Sie</td><td>können</td><td>müssen</td><td>wollen</td><td>dürfen</td></tr>
+          <tr><td>ihr</td><td>könnt</td><td>müsst</td><td>wollt</td><td>dürft</td></tr>
+        </table></div>
+          <p class="en">ich and er/sie have the same form, with no ending. können = can · müssen = must · wollen = want · dürfen = may.</p>
+        </div></details>
+
+        <details><summary>5 · Articles: der, die, das</summary><div class="gbody"><div class="tw"><table class="gt">
+          <tr><th></th><th>masc.</th><th>fem.</th><th>neut.</th><th>plural</th></tr>
+          <tr><td>Nominativ</td><td>der / ein / kein</td><td>die / eine / keine</td><td>das / ein / kein</td><td>die / – / keine</td></tr>
+          <tr><td>Akkusativ</td><td><b>den / einen / keinen</b></td><td>die / eine / keine</td><td>das / ein / kein</td><td>die / – / keine</td></tr>
+          <tr><td>Dativ</td><td>dem / einem</td><td>der / einer</td><td>dem / einem</td><td>den / –</td></tr>
+        </table></div>
+          <div class="line"><span class="de">Der Tisch ist neu. → Ich kaufe <b>den</b> Tisch. · Ich habe <b>einen</b> Bruder.</span><span class="en">Akkusativ = the object (after haben, kaufen, möchten, brauchen, es gibt). Only masculine changes.</span></div>
+          <div class="line"><span class="de">Ich fahre mit <b>dem</b> Bus. · Ich wohne bei <b>der</b> Familie.</span><span class="en">Dativ after mit, bei, von, zu, aus, nach.</span></div>
+          <p class="en">Always learn nouns with their article. -ung, -heit, -keit, -in are always die.</p>
+        </div></details>
+
+        <details><summary>6 · Pronouns</summary><div class="gbody"><div class="tw"><table class="gt">
+          <tr><th>Nominativ</th><td>ich</td><td>du</td><td>er</td><td>sie</td><td>es</td><td>wir</td><td>ihr</td><td>sie/Sie</td></tr>
+          <tr><th>Akkusativ</th><td>mich</td><td>dich</td><td><b>ihn</b></td><td>sie</td><td>es</td><td>uns</td><td>euch</td><td>sie/Sie</td></tr>
+          <tr><th>Dativ</th><td>mir</td><td>dir</td><td>ihm</td><td>ihr</td><td>ihm</td><td>uns</td><td>euch</td><td>ihnen/Ihnen</td></tr>
+        </table></div>
+          <div class="line"><span class="de">Der Film ist gut. Ich mag <b>ihn</b>. · Kannst du <b>mir</b> helfen? · Wie geht es <b>Ihnen</b>?</span></div>
+        </div></details>
+
+        <details><summary>7 · My, your, his …</summary><div class="gbody"><div class="tw"><table class="gt">
+          <tr><th>ich</th><th>du</th><th>er/es</th><th>sie</th><th>wir</th><th>ihr</th><th>Sie</th></tr>
+          <tr><td>mein</td><td>dein</td><td>sein</td><td>ihr</td><td>unser</td><td>euer</td><td>Ihr</td></tr>
+        </table></div>
+          <div class="line"><span class="de">mein Bruder · mein<b>e</b> Mutter · mein Kind · mein<b>e</b> Eltern</span><span class="en">They take the same endings as ein / kein.</span></div>
+          <div class="line"><span class="de">Ich besuche mein<b>en</b> Bruder.</span><span class="en">Akkusativ masculine: -en.</span></div>
+        </div></details>
+
+        <details><summary>8 · nicht or kein?</summary><div class="gbody">
+          <div class="line"><span class="de">Ich habe <b>kein</b> Auto. · Ich trinke <b>keinen</b> Kaffee.</span><span class="en">kein = no / not a. Use it with nouns that have ein or no article.</span></div>
+          <div class="line"><span class="de">Ich komme <b>nicht</b>. · Das ist <b>nicht</b> teuer. · Ich wohne <b>nicht</b> in Berlin.</span><span class="en">nicht for everything else: verbs, adjectives, places.</span></div>
+        </div></details>
+
+        <details><summary>9 · Perfect tense (talking about the past)</summary><div class="gbody">
+          <div class="line"><span class="de">machen → <b>ge</b>mach<b>t</b> · kaufen → <b>ge</b>kauf<b>t</b> · arbeiten → <b>ge</b>arbeit<b>et</b></span><span class="en">Regular: ge- … -t.</span></div>
+          <div class="line"><span class="de">essen → gegessen · trinken → getrunken · sehen → gesehen · schreiben → geschrieben · lesen → gelesen</span><span class="en">Irregular: ge- … -en. Learn them.</span></div>
+          <div class="line"><span class="de">Ich <b>bin</b> nach Berlin <b>gefahren</b>. · Ich <b>bin</b> spät <b>aufgestanden</b>.</span><span class="en">Use sein for movement (fahren, gehen, fliegen, kommen) and change (aufstehen). Everything else: haben.</span></div>
+          <div class="line"><span class="de">einkaufen → einge<b>kauft</b> · studieren → studiert · besuchen → besucht</span><span class="en">Separable: ge goes in the middle. -ieren and be- verbs: no ge.</span></div>
+          <div class="line"><span class="de">Ich <b>war</b> in Japan. · Ich <b>hatte</b> keine Zeit.</span><span class="en">For sein and haben, use war / hatte instead.</span></div>
+        </div></details>
+
+        <details><summary>10 · Imperative (giving instructions)</summary><div class="gbody">
+          <div class="line"><span class="de">Sie: <b>Kommen Sie</b> bitte! · du: <b>Komm</b> bitte! · ihr: <b>Kommt</b> bitte!</span></div>
+          <div class="line"><span class="de">du nimmst → <b>Nimm</b>! · du isst → <b>Iss</b>! · du fährst → <b>Fahr</b>! · sein → <b>Sei</b> leise!</span><span class="en">du-form: take the du verb and drop -st. a → ä changes are dropped (fahr).</span></div>
+        </div></details>
+
+        <details><summary>11 · Time</summary><div class="gbody">
+          <div class="line"><span class="de"><b>am</b> Montag · <b>am</b> Wochenende · <b>am</b> Abend · <b>am</b> 5. November</span><span class="en">am: days, parts of the day, dates.</span></div>
+          <div class="line"><span class="de"><b>um</b> 8 Uhr · <b>im</b> Mai · <b>im</b> Sommer · <b>von</b> 9 <b>bis</b> 17 Uhr</span><span class="en">um: clock time · im: months and seasons.</span></div>
+          <div class="line"><span class="de">Viertel nach acht = 8:15 · Viertel vor acht = 7:45 · <b>halb acht = 7:30</b></span><span class="en">⚠ halb acht is half <em>to</em> eight, not half past.</span></div>
+        </div></details>
+
+        <details><summary>12 · Places: where from, where, where to</summary><div class="gbody">
+          <div class="line"><span class="de">Woher? Ich komme <b>aus</b> China / <b>aus der</b> Türkei.</span></div>
+          <div class="line"><span class="de">Wo? Ich wohne <b>in</b> Shanghai. Ich bin <b>im</b> Kino / <b>in der</b> Schule / <b>beim</b> Arzt / <b>zu Hause</b>.</span></div>
+          <div class="line"><span class="de">Wohin? Ich fahre <b>nach</b> Berlin. Ich gehe <b>ins</b> Kino / <b>in die</b> Stadt / <b>zum</b> Arzt / <b>nach Hause</b>.</span><span class="en">Cities and countries: nach. People and places like Arzt, Bahnhof: zu (zum/zur).</span></div>
+        </div></details>
+
+        <details><summary>13 · Question words</summary><div class="gbody"><div class="tw"><table class="gt">
+          <tr><td>Wer?</td><td>who</td><td>Was?</td><td>what</td></tr>
+          <tr><td>Wo?</td><td>where</td><td>Woher?</td><td>where from</td></tr>
+          <tr><td>Wohin?</td><td>where to</td><td>Wann?</td><td>when</td></tr>
+          <tr><td>Wie?</td><td>how</td><td>Wie viel?</td><td>how much</td></tr>
+          <tr><td>Wie alt?</td><td>how old</td><td>Warum?</td><td>why</td></tr>
+          <tr><td>Welche?</td><td>which</td><td>Wie spät?</td><td>what time</td></tr>
+        </table></div></div></details>
+
+        <details><summary>14 · Linking words and “gern”</summary><div class="gbody">
+          <div class="line"><span class="de">und · aber · oder · <b>denn</b></span><span class="en">Normal word order after these: Ich lerne Deutsch, denn ich <u>möchte</u> nach Berlin.</span></div>
+          <div class="line"><span class="de">Ich trinke <b>gern</b> Tee. · Ich trinke <b>lieber</b> Kaffee. · Ich trinke <b>am liebsten</b> Wasser.</span><span class="en">like · prefer · like most. gern goes after the verb.</span></div>
+          <div class="line"><span class="de">Ich <b>mag</b> Katzen. · Ich <b>möchte</b> eine Katze.</span><span class="en">mag = like (in general) · möchte = would like (now).</span></div>
+        </div></details>
+
+        <details><summary>15 · Plurals</summary><div class="gbody">
+          <div class="line"><span class="de">die Lampe → Lampe<b>n</b> · die Frau → Frau<b>en</b> · der Tisch → Tisch<b>e</b> · das Kind → Kind<b>er</b> · das Auto → Auto<b>s</b> · der Apfel → <b>Ä</b>pfel</span><span class="en">The plural article is always die. Learn each plural with the noun.</span></div>
+        </div></details>
+
       </div>
     </div>
 
@@ -562,6 +674,13 @@ $("#msgCard").addEventListener("click", e => {
   if (a.dataset.act === "next") draft = "";
   const ta = $("#msgCard textarea");
   if (ta) { ta.value = draft; ta.dispatchEvent(new Event("input", { bubbles: true })); }
+});
+
+/* Grammar: open or close all sections */
+$("#gAll").addEventListener("click", e => {
+  const ds = document.querySelectorAll("#gram details"), open = [...ds].some(d => !d.open);
+  ds.forEach(d => d.open = open);
+  e.currentTarget.textContent = open ? "Close all" : "Open all";
 });
 
 /* Tabs (remembered per viewer) */
