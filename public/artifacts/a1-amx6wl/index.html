@@ -472,57 +472,59 @@ const FOLLOW = [
   ["Welche Filme sehen Sie gern?", "Ich sehe gern Komödien.", "Which films do you like?"],
   ["Warum lernen Sie Deutsch?", "Ich möchte nach Deutschland reisen.", "Why do you learn German?"]
 ];
+/* [topic, word, question, answer, question in English, answer in English] */
 const T2 = [
-  ["Essen und Trinken", "Frühstück", "Was isst du zum Frühstück?", "Ich esse Brot und trinke Tee.", "What do you eat for breakfast? — Bread and tea."],
-  ["Essen und Trinken", "Lieblingsessen", "Was ist dein Lieblingsessen?", "Mein Lieblingsessen ist Nudeln.", "What is your favourite food? — Noodles."],
-  ["Essen und Trinken", "Fleisch", "Isst du gern Fleisch?", "Ja, ich esse gern Hähnchen.", "Do you like meat? — Yes, I like chicken."],
-  ["Essen und Trinken", "Kaffee", "Trinkst du gern Kaffee?", "Nein, ich trinke lieber Tee.", "Do you like coffee? — No, I prefer tea."],
-  ["Essen und Trinken", "Restaurant", "Gehst du oft ins Restaurant?", "Ja, am Wochenende gehe ich oft ins Restaurant.", "Do you often go to restaurants? — Yes, at the weekend."],
-  ["Essen und Trinken", "Obst", "Welches Obst magst du?", "Ich mag Äpfel und Bananen.", "Which fruit do you like? — Apples and bananas."],
-  ["Wohnen", "Zimmer", "Wie viele Zimmer hat deine Wohnung?", "Meine Wohnung hat drei Zimmer.", "How many rooms? — Three."],
-  ["Wohnen", "allein", "Wohnst du allein?", "Nein, ich wohne mit meinen Eltern.", "Do you live alone? — No, with my parents."],
-  ["Wohnen", "Küche", "Ist deine Küche groß?", "Nein, meine Küche ist klein.", "Is your kitchen big? — No, it is small."],
-  ["Wohnen", "Balkon", "Hast du einen Balkon?", "Ja, ich habe einen Balkon.", "Do you have a balcony? — Yes."],
-  ["Wohnen", "Stadt", "Wohnst du gern in der Stadt?", "Ja, Shanghai ist groß und interessant.", "Do you like living in the city? — Yes."],
-  ["Freizeit", "Sport", "Machst du gern Sport?", "Ja, ich schwimme gern.", "Do you like sport? — Yes, I like swimming."],
-  ["Freizeit", "Wochenende", "Was machst du am Wochenende?", "Am Wochenende sehe ich Filme.", "What do you do at the weekend? — I watch films."],
-  ["Freizeit", "Kino", "Wie oft gehst du ins Kino?", "Ich gehe einmal pro Woche ins Kino.", "How often do you go to the cinema? — Once a week."],
-  ["Freizeit", "Musik", "Welche Musik hörst du gern?", "Ich höre gern Popmusik.", "Which music do you like? — Pop."],
-  ["Freizeit", "Buch", "Liest du gern Bücher?", "Ja, ich lese gern Romane.", "Do you like reading? — Yes, novels."],
-  ["Freizeit", "Freunde", "Was machst du mit deinen Freunden?", "Wir gehen zusammen essen.", "What do you do with friends? — We eat out together."],
-  ["Reisen", "Urlaub", "Wohin fährst du im Urlaub?", "Ich fahre nach Japan.", "Where do you go on holiday? — To Japan."],
-  ["Reisen", "Zug", "Fährst du gern mit dem Zug?", "Ja, der Zug ist schnell und bequem.", "Do you like taking the train? — Yes."],
-  ["Reisen", "Hotel", "Schläfst du im Urlaub im Hotel?", "Ja, ich schlafe im Hotel.", "Do you sleep in a hotel on holiday? — Yes."],
-  ["Reisen", "Flugzeug", "Fliegst du oft?", "Nein, nicht so oft. Zweimal pro Jahr.", "Do you fly often? — Twice a year."],
-  ["Reisen", "Land", "Welches Land möchtest du besuchen?", "Ich möchte Deutschland besuchen.", "Which country would you like to visit? — Germany."],
-  ["Einkaufen", "Supermarkt", "Wann gehst du in den Supermarkt?", "Ich gehe am Samstag in den Supermarkt.", "When do you go to the supermarket? — On Saturday."],
-  ["Einkaufen", "Kleidung", "Wo kaufst du Kleidung?", "Ich kaufe Kleidung im Internet.", "Where do you buy clothes? — Online."],
-  ["Einkaufen", "bezahlen", "Bezahlst du bar oder mit Karte?", "Ich bezahle mit dem Handy.", "Cash or card? — With my phone."],
-  ["Einkaufen", "teuer", "Was ist in Shanghai teuer?", "Die Wohnungen sind sehr teuer.", "What is expensive in Shanghai? — Flats."],
-  ["Studium", "Universität", "Wo studierst du?", "Ich studiere in Shanghai.", "Where do you study? — In Shanghai."],
-  ["Studium", "Fach", "Was studierst du?", "Ich studiere … (Wirtschaft).", "What do you study?"],
-  ["Studium", "Prüfung", "Hast du bald eine Prüfung?", "Ja, am Donnerstag habe ich eine Prüfung.", "Do you have an exam soon? — Yes, on Thursday."],
-  ["Studium", "Deutsch", "Warum lernst du Deutsch?", "Ich möchte nach Deutschland reisen.", "Why do you learn German?"]
+  ["Essen und Trinken", "Frühstück", "Was isst du zum Frühstück?", "Ich esse Brot und trinke Tee.", "What do you eat for breakfast?", "I eat bread and drink tea."],
+  ["Essen und Trinken", "Lieblingsessen", "Was ist dein Lieblingsessen?", "Mein Lieblingsessen ist Nudeln.", "What is your favourite food?", "My favourite food is noodles."],
+  ["Essen und Trinken", "Fleisch", "Isst du gern Fleisch?", "Ja, ich esse gern Hähnchen.", "Do you like eating meat?", "Yes, I like eating chicken."],
+  ["Essen und Trinken", "Kaffee", "Trinkst du gern Kaffee?", "Nein, ich trinke lieber Tee.", "Do you like drinking coffee?", "No, I prefer tea."],
+  ["Essen und Trinken", "Restaurant", "Gehst du oft ins Restaurant?", "Ja, am Wochenende gehe ich oft ins Restaurant.", "Do you often go to restaurants?", "Yes, at the weekend I often go to a restaurant."],
+  ["Essen und Trinken", "Obst", "Welches Obst magst du?", "Ich mag Äpfel und Bananen.", "Which fruit do you like?", "I like apples and bananas."],
+  ["Wohnen", "Zimmer", "Wie viele Zimmer hat deine Wohnung?", "Meine Wohnung hat drei Zimmer.", "How many rooms does your flat have?", "My flat has three rooms."],
+  ["Wohnen", "allein", "Wohnst du allein?", "Nein, ich wohne mit meinen Eltern.", "Do you live alone?", "No, I live with my parents."],
+  ["Wohnen", "Küche", "Ist deine Küche groß?", "Nein, meine Küche ist klein.", "Is your kitchen big?", "No, my kitchen is small."],
+  ["Wohnen", "Balkon", "Hast du einen Balkon?", "Ja, ich habe einen Balkon.", "Do you have a balcony?", "Yes, I have a balcony."],
+  ["Wohnen", "Stadt", "Wohnst du gern in der Stadt?", "Ja, Shanghai ist groß und interessant.", "Do you like living in the city?", "Yes, Shanghai is big and interesting."],
+  ["Freizeit", "Sport", "Machst du gern Sport?", "Ja, ich schwimme gern.", "Do you like doing sport?", "Yes, I like swimming."],
+  ["Freizeit", "Wochenende", "Was machst du am Wochenende?", "Am Wochenende sehe ich Filme.", "What do you do at the weekend?", "At the weekend I watch films."],
+  ["Freizeit", "Kino", "Wie oft gehst du ins Kino?", "Ich gehe einmal pro Woche ins Kino.", "How often do you go to the cinema?", "I go to the cinema once a week."],
+  ["Freizeit", "Musik", "Welche Musik hörst du gern?", "Ich höre gern Popmusik.", "What music do you like listening to?", "I like listening to pop music."],
+  ["Freizeit", "Buch", "Liest du gern Bücher?", "Ja, ich lese gern Romane.", "Do you like reading books?", "Yes, I like reading novels."],
+  ["Freizeit", "Freunde", "Was machst du mit deinen Freunden?", "Wir gehen zusammen essen.", "What do you do with your friends?", "We go out to eat together."],
+  ["Reisen", "Urlaub", "Wohin fährst du im Urlaub?", "Ich fahre nach Japan.", "Where do you go on holiday?", "I go to Japan."],
+  ["Reisen", "Zug", "Fährst du gern mit dem Zug?", "Ja, der Zug ist schnell und bequem.", "Do you like travelling by train?", "Yes, the train is fast and comfortable."],
+  ["Reisen", "Hotel", "Schläfst du im Urlaub im Hotel?", "Ja, ich schlafe im Hotel.", "Do you sleep in a hotel on holiday?", "Yes, I sleep in a hotel."],
+  ["Reisen", "Flugzeug", "Fliegst du oft?", "Nein, nicht so oft. Zweimal pro Jahr.", "Do you fly often?", "No, not so often. Twice a year."],
+  ["Reisen", "Land", "Welches Land möchtest du besuchen?", "Ich möchte Deutschland besuchen.", "Which country would you like to visit?", "I would like to visit Germany."],
+  ["Einkaufen", "Supermarkt", "Wann gehst du in den Supermarkt?", "Ich gehe am Samstag in den Supermarkt.", "When do you go to the supermarket?", "I go to the supermarket on Saturday."],
+  ["Einkaufen", "Kleidung", "Wo kaufst du Kleidung?", "Ich kaufe Kleidung im Internet.", "Where do you buy clothes?", "I buy clothes online."],
+  ["Einkaufen", "bezahlen", "Bezahlst du bar oder mit Karte?", "Ich bezahle mit dem Handy.", "Do you pay in cash or by card?", "I pay with my phone."],
+  ["Einkaufen", "teuer", "Was ist in Shanghai teuer?", "Die Wohnungen sind sehr teuer.", "What is expensive in Shanghai?", "The flats are very expensive."],
+  ["Studium", "Universität", "Wo studierst du?", "Ich studiere in Shanghai.", "Where do you study?", "I study in Shanghai."],
+  ["Studium", "Fach", "Was studierst du?", "Ich studiere … (Wirtschaft).", "What do you study?", "I study … (economics)."],
+  ["Studium", "Prüfung", "Hast du bald eine Prüfung?", "Ja, am Donnerstag habe ich eine Prüfung.", "Do you have an exam soon?", "Yes, I have an exam on Thursday."],
+  ["Studium", "Deutsch", "Warum lernst du Deutsch?", "Ich möchte nach Deutschland reisen.", "Why are you learning German?", "I would like to travel to Germany."]
 ];
+/* [picture, word, request, reaction, request in English, reaction in English] */
 const T3 = [
-  ["🪟", "Fenster", "Können Sie bitte das Fenster öffnen?", "Ja, gern.", "Open the window, please."],
-  ["💧", "Wasser", "Kann ich bitte ein Glas Wasser haben?", "Hier, bitte.", "A glass of water, please."],
-  ["🖊️", "Kuli", "Gib mir bitte deinen Kuli.", "Hier, bitte.", "Give me your pen, please."],
-  ["☕", "Kaffee", "Ich möchte bitte einen Kaffee.", "Gern. Mit Milch?", "I'd like a coffee, please."],
-  ["📱", "Handy", "Kann ich bitte dein Handy benutzen?", "Ja, natürlich.", "Can I use your phone?"],
-  ["💡", "Licht", "Kannst du bitte das Licht anmachen?", "Ja, klar.", "Turn on the light, please."],
-  ["🚪", "Tür", "Können Sie bitte die Tür schließen?", "Ja, sofort.", "Close the door, please."],
-  ["🔊", "Musik", "Kannst du bitte die Musik leiser machen?", "Ja, okay. Entschuldigung.", "Turn the music down, please."],
-  ["📖", "Buch", "Kannst du mir bitte das Buch geben?", "Hier, bitte.", "Give me the book, please."],
-  ["🧂", "Salz", "Gib mir bitte das Salz.", "Bitte schön.", "Pass me the salt, please."],
-  ["🚭", "nicht rauchen", "Bitte rauchen Sie hier nicht.", "Oh, Entschuldigung.", "Please don't smoke here."],
-  ["🕒", "Uhr", "Wie spät ist es, bitte?", "Es ist drei Uhr.", "What time is it, please?"],
-  ["🎫", "Fahrkarte", "Ich möchte bitte eine Fahrkarte nach Berlin.", "Gern. Das kostet 30 Euro.", "A ticket to Berlin, please."],
-  ["🧾", "Rechnung", "Die Rechnung, bitte.", "Moment, bitte.", "The bill, please."],
-  ["📄", "Papier", "Hast du bitte ein Blatt Papier für mich?", "Ja, hier.", "A sheet of paper for me, please?"],
-  ["☂️", "Regenschirm", "Hast du bitte einen Regenschirm für mich?", "Nein, tut mir leid.", "Do you have an umbrella for me?"],
-  ["🚕", "Taxi", "Können Sie mir bitte ein Taxi rufen?", "Ja, natürlich.", "Could you call me a taxi?"],
-  ["🍎", "Apfel", "Kann ich bitte einen Apfel haben?", "Ja, nimm bitte.", "Can I have an apple?"]
+  ["🪟", "Fenster", "Können Sie bitte das Fenster öffnen?", "Ja, gern.", "Could you open the window, please?", "Yes, gladly."],
+  ["💧", "Wasser", "Kann ich bitte ein Glas Wasser haben?", "Hier, bitte.", "Can I have a glass of water, please?", "Here you are."],
+  ["🖊️", "Kuli", "Gib mir bitte deinen Kuli.", "Hier, bitte.", "Give me your pen, please.", "Here you are."],
+  ["☕", "Kaffee", "Ich möchte bitte einen Kaffee.", "Gern. Mit Milch?", "I would like a coffee, please.", "Sure. With milk?"],
+  ["📱", "Handy", "Kann ich bitte dein Handy benutzen?", "Ja, natürlich.", "Can I use your phone, please?", "Yes, of course."],
+  ["💡", "Licht", "Kannst du bitte das Licht anmachen?", "Ja, klar.", "Can you turn on the light, please?", "Yes, sure."],
+  ["🚪", "Tür", "Können Sie bitte die Tür schließen?", "Ja, sofort.", "Could you close the door, please?", "Yes, right away."],
+  ["🔊", "Musik", "Kannst du bitte die Musik leiser machen?", "Ja, okay. Entschuldigung.", "Can you turn the music down, please?", "Yes, okay. Sorry."],
+  ["📖", "Buch", "Kannst du mir bitte das Buch geben?", "Hier, bitte.", "Can you give me the book, please?", "Here you are."],
+  ["🧂", "Salz", "Gib mir bitte das Salz.", "Bitte schön.", "Pass me the salt, please.", "Here you are."],
+  ["🚭", "nicht rauchen", "Bitte rauchen Sie hier nicht.", "Oh, Entschuldigung.", "Please don't smoke here.", "Oh, sorry."],
+  ["🕒", "Uhr", "Wie spät ist es, bitte?", "Es ist drei Uhr.", "What time is it, please?", "It is three o'clock."],
+  ["🎫", "Fahrkarte", "Ich möchte bitte eine Fahrkarte nach Berlin.", "Gern. Das kostet 30 Euro.", "I would like a ticket to Berlin, please.", "Sure. That costs 30 euros."],
+  ["🧾", "Rechnung", "Die Rechnung, bitte.", "Moment, bitte.", "The bill, please.", "One moment, please."],
+  ["📄", "Papier", "Hast du bitte ein Blatt Papier für mich?", "Ja, hier.", "Do you have a sheet of paper for me, please?", "Yes, here."],
+  ["☂️", "Regenschirm", "Hast du bitte einen Regenschirm für mich?", "Nein, tut mir leid.", "Do you have an umbrella for me, please?", "No, sorry."],
+  ["🚕", "Taxi", "Können Sie mir bitte ein Taxi rufen?", "Ja, natürlich.", "Could you call me a taxi, please?", "Yes, of course."],
+  ["🍎", "Apfel", "Kann ich bitte einen Apfel haben?", "Ja, nimm bitte.", "Can I have an apple, please?", "Yes, please take one."]
 ];
 /* Writing part 1: [label, fixed value or null, accepted answers, hint] */
 const FORMS = [
@@ -613,30 +615,26 @@ const controls = (open, showLabel = "Show answer", nextLabel = "Next card →") 
     <button class="btn" data-act="next">${nextLabel}</button>
   </div>`;
 
-deck($("#t2card"), T2, ([topic, word, q, a, en], open, n, total) => `
+const pair = (who, de, en) => `<div class="line"><span class="who">${who}</span><div class="say-row"><span class="de">${de}</span>${speakBtn(de)}</div><span class="en">${en}</span></div>`;
+
+deck($("#t2card"), T2, ([topic, word, q, a, qEn, aEn], open, n, total) => `
   <div class="cardtop"><span class="topic">Thema: ${topic}</span><span class="counter">${n} / ${total}</span></div>
   <div class="cue">${word}</div>
   <p class="task">Make a question with this word. Then answer it yourself.</p>
-  ${open ? `<div class="answer">
-    <div class="line"><span class="who">You ask</span><div class="say-row"><span class="de">${q}</span>${speakBtn(q)}</div></div>
-    <div class="line"><span class="who">Partner answers</span><div class="say-row"><span class="de">${a}</span>${speakBtn(a)}</div></div>
-    <span class="en">${en}</span></div>` : ""}
+  ${open ? `<div class="answer">${pair("You ask", q, qEn)}${pair("Partner answers", a, aEn)}</div>` : ""}
   ${controls(open)}`);
 
-deck($("#t3card"), T3, ([pic, word, q, a, en], open, n, total) => `
+deck($("#t3card"), T3, ([pic, word, q, a, qEn, aEn], open, n, total) => `
   <div class="cardtop"><span class="topic">Picture card</span><span class="counter">${n} / ${total}</span></div>
   <div class="cue"><span class="pic" aria-hidden="true">${pic}</span>${open ? `<span class="gloss">${word}</span>` : ""}</div>
   <p class="task">Make a polite request. Then say how your partner reacts.</p>
-  ${open ? `<div class="answer">
-    <div class="line"><span class="who">You ask</span><div class="say-row"><span class="de">${q}</span>${speakBtn(q)}</div></div>
-    <div class="line"><span class="who">Partner reacts</span><div class="say-row"><span class="de">${a}</span>${speakBtn(a)}</div></div>
-    <span class="en">${en}</span></div>` : ""}
+  ${open ? `<div class="answer">${pair("You ask", q, qEn)}${pair("Partner reacts", a, aEn)}</div>` : ""}
   ${controls(open)}`);
 
-$("#t2list").innerHTML = T2.map(([t, w, q, a]) =>
-  `<div class="item"><span class="k">${t} · ${w}</span><span class="de">${q}</span><span class="en">→ ${a}</span></div>`).join("");
-$("#t3list").innerHTML = T3.map(([p, w, q, a]) =>
-  `<div class="item"><span class="k">${p} ${w}</span><span class="de">${q}</span><span class="en">→ ${a}</span></div>`).join("");
+const listItem = (k, q, a, qEn, aEn) =>
+  `<div class="item"><span class="k">${k}</span><span class="de">${q}</span><span class="en">${qEn}</span><span class="de">→ ${a}</span><span class="en">${aEn}</span></div>`;
+$("#t2list").innerHTML = T2.map(([t, w, q, a, qEn, aEn]) => listItem(`${t} · ${w}`, q, a, qEn, aEn)).join("");
+$("#t3list").innerHTML = T3.map(([p, w, q, a, qEn, aEn]) => listItem(`${p} ${w}`, q, a, qEn, aEn)).join("");
 
 /* Writing part 1: form with checking */
 const norm = s => s.toLowerCase().replace(/\s+/g, " ").trim().replace(/[.]$/, "");
