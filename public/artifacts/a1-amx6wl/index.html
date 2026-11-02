@@ -20,16 +20,17 @@
   --accent-soft: #e3e9f8;
   --stamp: #b4372b;       /* exam stamp red */
   --good: #1f7a4a;
+  --der: #2f5fd0; --die: #c8344a; --das: #23845a;   /* gender colours */
   --display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
   --body: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #12161c; --paper: #1b2129; --ink: #e6ebf1; --muted: #9aa7b6; --line: #2d3641;
-  --accent: #8aa6f2; --accent-soft: #233050; --stamp: #f08a7e; --good: #6fd19b; color-scheme: dark; } }
+  --accent: #8aa6f2; --accent-soft: #233050; --stamp: #f08a7e; --good: #6fd19b; --der: #7f9ff0; --die: #f08a9a; --das: #6fd19b; color-scheme: dark; } }
 :root[data-theme="dark"] {
   --bg: #12161c; --paper: #1b2129; --ink: #e6ebf1; --muted: #9aa7b6; --line: #2d3641;
-  --accent: #8aa6f2; --accent-soft: #233050; --stamp: #f08a7e; --good: #6fd19b; color-scheme: dark; }
+  --accent: #8aa6f2; --accent-soft: #233050; --stamp: #f08a7e; --good: #6fd19b; --der: #7f9ff0; --die: #f08a9a; --das: #6fd19b; color-scheme: dark; }
 
 [hidden] { display: none !important; } /* the standalone copies have no reset that does this */
 body { background: var(--bg); color: var(--ink); font: 17px/1.5 var(--body); margin: 0; }
@@ -73,6 +74,11 @@ section { display: grid; gap: 16px; }
 .cue .pic { font-size: 3.4rem; line-height: 1; }
 .cue .gloss { font: 400 0.95rem var(--body); color: var(--muted); }
 .task { color: var(--muted); font-size: 0.95rem; text-align: center; }
+.winfo { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 10px; font: 400 0.95rem var(--body); color: var(--muted); }
+.winfo .pos { font: 500 0.72rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.winfo .wen { color: var(--ink); font-weight: 600; }
+.art { font: 700 0.9rem var(--body); padding: 2px 8px; border-radius: 4px; color: var(--paper); }
+.art.der { background: var(--der); } .art.die { background: var(--die); } .art.das { background: var(--das); }
 .answer { display: grid; gap: 10px; border-top: 1px dashed var(--line); padding-top: 14px; }
 .line { display: grid; gap: 2px; }
 .line .who { font: 500 0.7rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
@@ -505,6 +511,60 @@ const T2 = [
   ["Studium", "Prüfung", "Hast du bald eine Prüfung?", "Ja, am Donnerstag habe ich eine Prüfung.", "Do you have an exam soon?", "Yes, I have an exam on Thursday."],
   ["Studium", "Deutsch", "Warum lernst du Deutsch?", "Ich möchte nach Deutschland reisen.", "Why are you learning German?", "I would like to travel to Germany."]
 ];
+/* Word info for the card cue: [part of speech, article, plural, English] */
+const WORD = {
+  "Frühstück": ["noun", "das", "die Frühstücke", "breakfast"],
+  "Lieblingsessen": ["noun", "das", "–", "favourite food"],
+  "Fleisch": ["noun", "das", "no plural", "meat"],
+  "Kaffee": ["noun", "der", "die Kaffees", "coffee"],
+  "Restaurant": ["noun", "das", "die Restaurants", "restaurant"],
+  "Obst": ["noun", "das", "no plural", "fruit"],
+  "Zimmer": ["noun", "das", "die Zimmer", "room"],
+  "allein": ["adverb", "", "", "alone"],
+  "Küche": ["noun", "die", "die Küchen", "kitchen"],
+  "Balkon": ["noun", "der", "die Balkone", "balcony"],
+  "Stadt": ["noun", "die", "die Städte", "city, town"],
+  "Sport": ["noun", "der", "no plural", "sport"],
+  "Wochenende": ["noun", "das", "die Wochenenden", "weekend"],
+  "Kino": ["noun", "das", "die Kinos", "cinema"],
+  "Musik": ["noun", "die", "no plural", "music"],
+  "Buch": ["noun", "das", "die Bücher", "book"],
+  "Freunde": ["noun, plural", "die", "singular: der Freund", "friends"],
+  "Urlaub": ["noun", "der", "die Urlaube", "holiday"],
+  "Zug": ["noun", "der", "die Züge", "train"],
+  "Hotel": ["noun", "das", "die Hotels", "hotel"],
+  "Flugzeug": ["noun", "das", "die Flugzeuge", "plane"],
+  "Land": ["noun", "das", "die Länder", "country"],
+  "Supermarkt": ["noun", "der", "die Supermärkte", "supermarket"],
+  "Kleidung": ["noun", "die", "no plural", "clothes"],
+  "bezahlen": ["verb", "", "ich bezahle, du bezahlst", "to pay"],
+  "teuer": ["adjective", "", "opposite: billig", "expensive"],
+  "Universität": ["noun", "die", "die Universitäten", "university"],
+  "Fach": ["noun", "das", "die Fächer", "subject (at school)"],
+  "Prüfung": ["noun", "die", "die Prüfungen", "exam"],
+  "Deutsch": ["noun", "das", "no plural", "German (language)"],
+  "Fenster": ["noun", "das", "die Fenster", "window"],
+  "Wasser": ["noun", "das", "no plural", "water"],
+  "Kuli": ["noun", "der", "die Kulis", "pen"],
+  "Handy": ["noun", "das", "die Handys", "mobile phone"],
+  "Licht": ["noun", "das", "die Lichter", "light"],
+  "Tür": ["noun", "die", "die Türen", "door"],
+  "Salz": ["noun", "das", "no plural", "salt"],
+  "nicht rauchen": ["verb", "", "ich rauche, du rauchst", "not to smoke"],
+  "Uhr": ["noun", "die", "die Uhren", "clock; o'clock"],
+  "Fahrkarte": ["noun", "die", "die Fahrkarten", "ticket"],
+  "Rechnung": ["noun", "die", "die Rechnungen", "bill"],
+  "Papier": ["noun", "das", "no plural", "paper"],
+  "Regenschirm": ["noun", "der", "die Regenschirme", "umbrella"],
+  "Taxi": ["noun", "das", "die Taxis", "taxi"],
+  "Apfel": ["noun", "der", "die Äpfel", "apple"]
+};
+function wordInfo(w) {
+  const i = WORD[w];
+  if (!i) return "";
+  const [pos, art, extra, en] = i;
+  return `<span class="winfo">${art ? `<span class="art ${art}">${art}</span>` : ""}<span class="pos">${pos}</span>${extra ? `<span>${extra}</span>` : ""}<span class="wen">${en}</span></span>`;
+}
 /* [picture, word, request, reaction, request in English, reaction in English] */
 const T3 = [
   ["🪟", "Fenster", "Können Sie bitte das Fenster öffnen?", "Ja, gern.", "Could you open the window, please?", "Yes, gladly."],
@@ -619,14 +679,14 @@ const pair = (who, de, en) => `<div class="line"><span class="who">${who}</span>
 
 deck($("#t2card"), T2, ([topic, word, q, a, qEn, aEn], open, n, total) => `
   <div class="cardtop"><span class="topic">Thema: ${topic}</span><span class="counter">${n} / ${total}</span></div>
-  <div class="cue">${word}</div>
+  <div class="cue">${word}${wordInfo(word)}</div>
   <p class="task">Make a question with this word. Then answer it yourself.</p>
   ${open ? `<div class="answer">${pair("You ask", q, qEn)}${pair("Partner answers", a, aEn)}</div>` : ""}
   ${controls(open)}`);
 
 deck($("#t3card"), T3, ([pic, word, q, a, qEn, aEn], open, n, total) => `
   <div class="cardtop"><span class="topic">Picture card</span><span class="counter">${n} / ${total}</span></div>
-  <div class="cue"><span class="pic" aria-hidden="true">${pic}</span>${open ? `<span class="gloss">${word}</span>` : ""}</div>
+  <div class="cue"><span class="pic" aria-hidden="true">${pic}</span>${open ? `<span class="gloss">${word}</span>${wordInfo(word)}` : ""}</div>
   <p class="task">Make a polite request. Then say how your partner reacts.</p>
   ${open ? `<div class="answer">${pair("You ask", q, qEn)}${pair("Partner reacts", a, aEn)}</div>` : ""}
   ${controls(open)}`);
