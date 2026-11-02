@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jinyi A1 Speaking</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one column of exam "index cards"; a sticky tab strip for the five parts. */
+:root {
+  --bg: #eef1f4;
+  --paper: #ffffff;
+  --ink: #1d2733;
+  --muted: #5d6b7a;
+  --line: #d5dce4;
+  --accent: #2346a8;      /* ink blue */
+  --accent-soft: #e3e9f8;
+  --stamp: #b4372b;       /* exam stamp red */
+  --good: #1f7a4a;
+  --display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --body: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12161c; --paper: #1b2129; --ink: #e6ebf1; --muted: #9aa7b6; --line: #2d3641;
+  --accent: #8aa6f2; --accent-soft: #233050; --stamp: #f08a7e; --good: #6fd19b; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #12161c; --paper: #1b2129; --ink: #e6ebf1; --muted: #9aa7b6; --line: #2d3641;
+  --accent: #8aa6f2; --accent-soft: #233050; --stamp: #f08a7e; --good: #6fd19b; color-scheme: dark; }
+
+body { background: var(--bg); color: var(--ink); font: 17px/1.5 var(--body); }
+.wrap { max-width: 720px; margin: 0 auto; padding-block: 20px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: 1.9rem; }
+h2 { font-size: 1.35rem; }
+h3 { font-size: 1.05rem; }
+p { margin: 0; }
+a { color: var(--accent); }
+.head { display: grid; gap: 8px; }
+.stamp { justify-self: start; font: 500 0.78rem/1 var(--mono); letter-spacing: 0.06em; color: var(--stamp);
+  border: 1.5px solid var(--stamp); border-radius: 4px; padding: 6px 8px; transform: rotate(-1.5deg); }
+.lead { color: var(--muted); }
+
+nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding-block: 8px; border-bottom: 1px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+nav button { font: 600 0.9rem/1.15 var(--body); padding: 8px 4px; border: 1px solid var(--line);
+  background: var(--paper); color: var(--ink); border-radius: 8px; cursor: pointer; display: grid; gap: 2px; }
+nav button small { font: 500 0.62rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.75; }
+nav button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+button:focus-visible, summary:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+section { display: grid; gap: 16px; }
+.how { display: grid; gap: 10px; padding: 14px 16px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; }
+.how ol, .how ul { margin: 0; padding-left: 1.2em; }
+.steps { display: grid; gap: 8px; }
+.steps > div { display: block; }
+.steps .lbl { display: block; margin-bottom: 2px; }
+.lbl { font: 500 0.7rem var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+.card { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; gap: 14px;
+  box-shadow: 0 1px 0 var(--line), 0 6px 18px -12px rgba(20,30,50,.35); min-width: 0; }
+.cardtop { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.topic { font: 500 0.78rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.counter { font: 500 0.78rem var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.cue { font: 700 2.1rem/1.1 var(--display); text-align: center; padding-block: 18px; display: grid; gap: 6px; justify-items: center; }
+.cue .pic { font-size: 3.4rem; line-height: 1; }
+.cue .gloss { font: 400 0.95rem var(--body); color: var(--muted); }
+.task { color: var(--muted); font-size: 0.95rem; text-align: center; }
+.answer { display: grid; gap: 10px; border-top: 1px dashed var(--line); padding-top: 14px; }
+.line { display: grid; gap: 2px; }
+.line .who { font: 500 0.7rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.de { font-size: 1.12rem; font-weight: 600; }
+.en { color: var(--muted); font-size: 0.92rem; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.btn { font: 600 0.95rem var(--body); padding: 10px 16px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--paper); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+.btn.speak { padding: 6px 10px; font-size: 0.85rem; justify-self: start; flex: none; }
+.btn[aria-pressed="true"] { border-color: var(--stamp); color: var(--stamp); }
+.say-row { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.say-row > span { min-width: 0; }
+
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 8px 14px; }
+.kv dt { font: 500 0.8rem var(--mono); color: var(--muted); padding-top: 6px; }
+.kv dd { margin: 0; min-width: 0; }
+.spell { font: 500 1rem var(--mono); letter-spacing: 0.04em; overflow-wrap: anywhere; }
+
+details { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; }
+summary { cursor: pointer; padding: 12px 16px; font-weight: 600; }
+.list { display: grid; padding: 0 16px 8px; }
+.item { padding: 10px 0; border-top: 1px solid var(--line); display: grid; gap: 2px; min-width: 0; }
+.item .k { font: 500 0.75rem var(--mono); color: var(--accent); }
+.patterns { display: grid; gap: 8px; }
+.patterns .de { font-size: 1rem; }
+
+/* Writing */
+.source { font-size: 1.02rem; line-height: 1.6; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; }
+.form { display: grid; gap: 10px; }
+.field { display: grid; grid-template-columns: minmax(0, 9rem) minmax(0, 1fr); gap: 4px 12px; align-items: center; }
+.field label { font: 500 0.82rem var(--mono); color: var(--muted); }
+.field .fix { font-weight: 600; }
+.field .hint { grid-column: 2; font-size: 0.85rem; color: var(--muted); }
+input[type=text], textarea { font: 400 1rem var(--body); color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+  border-radius: 6px; padding: 8px 10px; width: 100%; box-sizing: border-box; min-width: 0; }
+textarea { min-height: 9rem; resize: vertical; line-height: 1.5; }
+.ok { border-color: var(--good) !important; }
+.bad { border-color: var(--stamp) !important; }
+.fb { grid-column: 2; font-size: 0.88rem; }
+.fb.okt { color: var(--good); }
+.fb.badt { color: var(--stamp); }
+.model { white-space: pre-line; font-size: 1.05rem; line-height: 1.6; padding: 12px 14px; border-left: 3px solid var(--good); background: var(--bg); border-radius: 0 8px 8px 0; }
+.wc { font: 500 0.8rem var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.check { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.check li::before { content: "☐  "; color: var(--accent); }
+
+/* Exam day */
+.facts { display: grid; gap: 0; }
+.fact { display: grid; grid-template-columns: 6.5rem 1fr; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.fact:first-child { border-top: 0; }
+.fact b { font-family: var(--display); }
+.mist { display: grid; gap: 8px; }
+.mist > div { display: grid; gap: 2px; }
+.x { color: var(--stamp); text-decoration: line-through; }
+.v { color: var(--good); font-weight: 600; }
+.links { display: grid; gap: 10px; }
+.links a { font-weight: 600; }
+footer { color: var(--muted); font-size: 0.85rem; }
+@media (max-width: 420px) { nav button { font-size: 0.8rem; } .field { grid-template-columns: 1fr; } .field .hint, .fb { grid-column: 1; } .fact { grid-template-columns: 1fr; gap: 2px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="head">
+    <span class="stamp">Goethe-Zertifikat A1 · Start Deutsch 1</span>
+    <h1>German A1 — exam practice for Jinyi</h1>
+    <p class="lead">Exam: <strong>Thursday 5 November, morning (China time)</strong>. <span id="countdown"></span></p>
+    <p class="lead"><strong>One rule for every card: say it first, then tap “Show answer”.</strong> Tap 🔊 to hear the German; tap again to stop.</p>
+  </header>
+
+  <nav role="tablist" aria-label="Exam parts">
+    <button role="tab" id="tab-t1" aria-selected="true" data-t="t1"><small>Speak</small>1</button>
+    <button role="tab" id="tab-t2" aria-selected="false" data-t="t2"><small>Speak</small>2</button>
+    <button role="tab" id="tab-t3" aria-selected="false" data-t="t3"><small>Speak</small>3</button>
+    <button role="tab" id="tab-w" aria-selected="false" data-t="w"><small>Write</small>✎</button>
+    <button role="tab" id="tab-d" aria-selected="false" data-t="d"><small>Exam</small>day</button>
+  </nav>
+
+  <!-- SPEAKING 1 -->
+  <section id="t1" role="tabpanel" aria-labelledby="tab-t1">
+    <div class="how">
+      <h2>Speaking 1 · Introduce yourself</h2>
+      <div class="steps">
+        <div><span class="lbl">In the exam</span>You see 7 keywords: <em>Name, Alter, Land, Wohnort, Sprachen, Beruf, Hobby</em>. Say one sentence for each. Then the examiner asks you to spell your name and say a number.</div>
+        <div><span class="lbl">On this page</span>Learn the 7 sentences below by heart. Tap 🔊 and repeat each one out loud.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cardtop"><span class="topic">Your text — learn it by heart</span></div>
+      <dl class="kv" id="introList"></dl>
+      <button class="btn speak" data-say="intro">🔊 Play full text</button>
+    </div>
+
+    <div class="card">
+      <div class="cardtop"><span class="topic">Spell your name</span></div>
+      <p class="en">Examiner: „Buchstabieren Sie bitte Ihren Namen." (Please spell your name.)</p>
+      <p class="spell">J (jot) · I (ih) · N (en) · Y (üpsilon) · I (ih)<br>L (el) · U (uh)</p>
+      <button class="btn speak" data-say="Jot, I, En, Ypsilon, I. El, U.">🔊 Hear it</button>
+    </div>
+
+    <div class="card">
+      <div class="cardtop"><span class="topic">Numbers</span></div>
+      <p class="en">Examiner: „Wie ist Ihre Telefonnummer?" Say the digits one by one. Practise with your own number.</p>
+      <p class="spell">0 null · 1 eins · 2 zwei (or zwo) · 3 drei · 4 vier<br>5 fünf · 6 sechs · 7 sieben · 8 acht · 9 neun</p>
+      <button class="btn speak" data-say="null, eins, zwei, drei, vier, fünf, sechs, sieben, acht, neun">🔊 Hear 0–9</button>
+    </div>
+
+    <details>
+      <summary>Possible follow-up questions</summary>
+      <div class="list" id="followList"></div>
+    </details>
+  </section>
+
+  <!-- SPEAKING 2 -->
+  <section id="t2" role="tabpanel" aria-labelledby="tab-t2" hidden>
+    <div class="how">
+      <h2>Speaking 2 · Ask one, answer one</h2>
+      <div class="steps">
+        <div><span class="lbl">In the exam</span>There is a topic, for example <em>Essen und Trinken</em>. You draw a card with one word, e.g. <em>Kino</em>. Make a question with that word and ask your partner. Then answer your partner's question. Usually two rounds.</div>
+        <div><span class="lbl">On this page</span>A word appears. Say a question with it out loud. Then tap “Show answer” to compare. Tap “Next card”.</div>
+      </div>
+    </div>
+    <div class="card" id="t2card"></div>
+    <details>
+      <summary>All 30 cards</summary>
+      <div class="list" id="t2list"></div>
+    </details>
+  </section>
+
+  <!-- SPEAKING 3 -->
+  <section id="t3" role="tabpanel" aria-labelledby="tab-t3" hidden>
+    <div class="how">
+      <h2>Speaking 3 · Ask for something</h2>
+      <div class="steps">
+        <div><span class="lbl">In the exam</span>You draw a card with a picture, for example a window. Make a polite request: “Please open the window.” Your partner reacts. Usually two rounds.</div>
+        <div><span class="lbl">On this page</span>A picture appears. Say your request out loud. Then tap “Show answer” to compare.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="cardtop"><span class="topic">Four patterns cover almost every card</span></div>
+      <div class="patterns">
+        <div class="line"><span class="de">Können Sie / Kannst du bitte … ?</span><span class="en">Could you please …? — Können Sie bitte das Fenster öffnen?</span></div>
+        <div class="line"><span class="de">Kann ich bitte … haben?</span><span class="en">Can I have …, please? — Kann ich bitte ein Glas Wasser haben?</span></div>
+        <div class="line"><span class="de">Gib mir bitte … / Geben Sie mir bitte …</span><span class="en">Give me … please.</span></div>
+        <div class="line"><span class="de">Ja, gern. · Natürlich. · Hier, bitte. · Nein, tut mir leid.</span><span class="en">Reactions: yes, gladly · of course · here you are · sorry, no.</span></div>
+      </div>
+    </div>
+    <div class="card" id="t3card"></div>
+    <details>
+      <summary>All 18 cards</summary>
+      <div class="list" id="t3list"></div>
+    </details>
+  </section>
+
+  <!-- WRITING -->
+  <section id="w" role="tabpanel" aria-labelledby="tab-w" hidden>
+    <div class="how">
+      <h2>Writing · 20 minutes, two parts</h2>
+      <div class="steps">
+        <div><span class="lbl">Part 1 · Form</span>You read a short text about a person. You fill 5 gaps in a form. Copy the words from the text exactly.</div>
+        <div><span class="lbl">Part 2 · Short message</span>You write about 30 words to a friend or an office. The task gives 3 points. Write one or two sentences for each point.</div>
+        <div><span class="lbl">On this page</span>Part 1: type into the gaps, then tap “Check”. Part 2: write your message in the box, then tap “Show model answer”.</div>
+      </div>
+    </div>
+
+    <div class="card" id="formCard"></div>
+
+    <div class="card">
+      <div class="cardtop"><span class="topic">Part 2 · Message template</span></div>
+      <div class="patterns">
+        <div class="line"><span class="lbl">To a friend</span><span class="de">Liebe Lisa, / Lieber Tom,</span><span class="en">… 3 points … then: Viele Grüße, Jinyi</span></div>
+        <div class="line"><span class="lbl">To an office, school, doctor</span><span class="de">Sehr geehrte Damen und Herren,</span><span class="en">… 3 points … then: Mit freundlichen Grüßen, Jinyi Lu</span></div>
+        <div class="line"><span class="lbl">Useful sentences</span><span class="de">Vielen Dank für … · Leider kann ich nicht kommen. · Ich habe eine Frage: … · Können Sie mir bitte … ? · Wann …? · Was kostet …? · Ich möchte …</span></div>
+      </div>
+    </div>
+
+    <div class="card" id="msgCard"></div>
+  </section>
+
+  <!-- EXAM DAY -->
+  <section id="d" role="tabpanel" aria-labelledby="tab-d" hidden>
+    <div class="how">
+      <h2>Exam day · read this the evening before</h2>
+      <div class="steps">
+        <div><span class="lbl">On this page</span>The whole exam on one screen, the most common mistakes, and official practice tests for listening and reading.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cardtop"><span class="topic">The exam</span></div>
+      <div class="facts">
+        <div class="fact"><b>Listening</b><span>About 20 min, 3 parts. Parts 1 and 3 are played twice, part 2 only once.</span></div>
+        <div class="fact"><b>Reading</b><span>About 25 min, 3 parts: short messages, small ads, signs. Mostly “richtig / falsch” or a/b.</span></div>
+        <div class="fact"><b>Writing</b><span>About 20 min: a form with 5 gaps, then a message of about 30 words.</span></div>
+        <div class="fact"><b>Speaking</b><span>About 15 min, in a small group: introduce yourself, ask and answer, ask for something.</span></div>
+        <div class="fact"><b>To pass</b><span>60 of 100 points in total. Each part counts 25 points.</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cardtop"><span class="topic">Official practice tests (listening + reading)</span></div>
+      <div class="links">
+        <div><a href="https://bfu.goethe.de/a1_sd1/" target="_blank" rel="noopener">Online model test</a><p class="en">Works on the phone, with audio. It tells you right or wrong. Do this one first.</p></div>
+        <div><a href="https://www.goethe.de/pro/relaunch/prf/materialien/A1_sd1/sd_1_uebungssatz01.pdf" target="_blank" rel="noopener">Practice test 01 (PDF)</a><p class="en">Full paper test with answer key at the end.</p></div>
+        <div><a href="https://www.goethe.de/ins/be/de/spr/prf/gzsd1/ueb.html" target="_blank" rel="noopener">All practice materials</a><p class="en">Goethe-Institut page with the audio files for the PDF test.</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cardtop"><span class="topic">Grammar you must have</span></div>
+      <div class="patterns">
+        <div class="line"><span class="de">Ich wohne in Shanghai. · Am Wochenende sehe ich Filme.</span><span class="en">The verb is always in position 2.</span></div>
+        <div class="line"><span class="de">Wo wohnst du? · Wohnst du allein?</span><span class="en">W-question: question word + verb. Yes/no question: verb first.</span></div>
+        <div class="line"><span class="de">ich wohne · du wohnst · er/sie wohnt · wir wohnen · ihr wohnt · Sie wohnen</span><span class="en">Regular verb endings.</span></div>
+        <div class="line"><span class="de">ich bin · du bist · er ist — ich habe · du hast · er hat</span><span class="en">sein and haben.</span></div>
+        <div class="line"><span class="de">Ich habe einen Bruder. · Ich habe keinen Balkon.</span><span class="en">After haben / möchten / kaufen: der → den, ein → einen. Only masculine changes.</span></div>
+        <div class="line"><span class="de">am Montag · um 8 Uhr · im Mai · am 5. November</span><span class="en">Time words.</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cardtop"><span class="topic">Common mistakes</span></div>
+      <div class="mist">
+        <div><span><span class="x">Ich habe 23 Jahre.</span> → <span class="v">Ich bin 23 Jahre alt.</span></span><span class="en">Age uses “sein” and needs “alt”.</span></div>
+        <div><span><span class="x">Ich komme von China.</span> → <span class="v">Ich komme aus China.</span></span><span class="en">Country of origin: aus.</span></div>
+        <div><span><span class="x">Ich bin Student.</span> → <span class="v">Ich bin Studentin.</span></span><span class="en">Female form ends in -in.</span></div>
+        <div><span><span class="x">Am Wochenende ich sehe Filme.</span> → <span class="v">Am Wochenende sehe ich Filme.</span></span><span class="en">Verb in position 2.</span></div>
+        <div><span><span class="x">ich mag kino</span> → <span class="v">Ich mag Kino.</span></span><span class="en">In writing, every noun starts with a capital letter.</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cardtop"><span class="topic">On the day</span></div>
+      <ul class="check">
+        <li>Bring your passport or ID card.</li>
+        <li>Write your answers on the answer sheet, not only on the task paper.</li>
+        <li>Never leave a gap empty. A wrong answer costs nothing.</li>
+        <li>In speaking, if you don't understand: „Wie bitte? Können Sie das bitte wiederholen?"</li>
+        <li>Short, correct sentences beat long, broken ones.</li>
+      </ul>
+      <div class="say-row"><span class="de">Wie bitte? Können Sie das bitte wiederholen?</span><button class="btn speak" data-say="Wie bitte? Können Sie das bitte wiederholen?">🔊</button></div>
+    </div>
+  </section>
+
+  <footer>Practice material for one learner. Model answers are examples: any correct simple sentence scores.</footer>
+</div>
+
+<script>
+const INTRO = [
+  ["Name?", "Ich heiße Jinyi Lu.", "My name is Jinyi Lu."],
+  ["Alter?", "Ich bin dreiundzwanzig Jahre alt.", "I am 23 years old."],
+  ["Land?", "Ich komme aus China.", "I come from China."],
+  ["Wohnort?", "Ich wohne in Shanghai.", "I live in Shanghai."],
+  ["Sprachen?", "Ich spreche Chinesisch, Englisch und ein bisschen Deutsch.", "I speak Chinese, English and a little German."],
+  ["Beruf?", "Ich bin Studentin.", "I am a student (female form)."],
+  ["Hobby?", "Ich reise gern und ich sehe gern Filme.", "I like travelling and watching films."]
+];
+const FOLLOW = [
+  ["Was studieren Sie?", "Ich studiere … (Wirtschaft / Informatik / Englisch …).", "What do you study?"],
+  ["Wo wohnen Sie in Shanghai?", "Ich wohne im Zentrum. / Ich wohne in Pudong.", "Where in Shanghai?"],
+  ["Wohin reisen Sie gern?", "Ich reise gern nach Japan.", "Where do you like to travel?"],
+  ["Welche Filme sehen Sie gern?", "Ich sehe gern Komödien.", "Which films do you like?"],
+  ["Warum lernen Sie Deutsch?", "Ich möchte nach Deutschland reisen.", "Why do you learn German?"]
+];
+const T2 = [
+  ["Essen und Trinken", "Frühstück", "Was isst du zum Frühstück?", "Ich esse Brot und trinke Tee.", "What do you eat for breakfast? — Bread and tea."],
+  ["Essen und Trinken", "Lieblingsessen", "Was ist dein Lieblingsessen?", "Mein Lieblingsessen ist Nudeln.", "What is your favourite food? — Noodles."],
+  ["Essen und Trinken", "Fleisch", "Isst du gern Fleisch?", "Ja, ich esse gern Hähnchen.", "Do you like meat? — Yes, I like chicken."],
+  ["Essen und Trinken", "Kaffee", "Trinkst du gern Kaffee?", "Nein, ich trinke lieber Tee.", "Do you like coffee? — No, I prefer tea."],
+  ["Essen und Trinken", "Restaurant", "Gehst du oft ins Restaurant?", "Ja, am Wochenende gehe ich oft ins Restaurant.", "Do you often go to restaurants? — Yes, at the weekend."],
+  ["Essen und Trinken", "Obst", "Welches Obst magst du?", "Ich mag Äpfel und Bananen.", "Which fruit do you like? — Apples and bananas."],
+  ["Wohnen", "Zimmer", "Wie viele Zimmer hat deine Wohnung?", "Meine Wohnung hat drei Zimmer.", "How many rooms? — Three."],
+  ["Wohnen", "allein", "Wohnst du allein?", "Nein, ich wohne mit meinen Eltern.", "Do you live alone? — No, with my parents."],
+  ["Wohnen", "Küche", "Ist deine Küche groß?", "Nein, meine Küche ist klein.", "Is your kitchen big? — No, it is small."],
+  ["Wohnen", "Balkon", "Hast du einen Balkon?", "Ja, ich habe einen Balkon.", "Do you have a balcony? — Yes."],
+  ["Wohnen", "Stadt", "Wohnst du gern in der Stadt?", "Ja, Shanghai ist groß und interessant.", "Do you like living in the city? — Yes."],
+  ["Freizeit", "Sport", "Machst du gern Sport?", "Ja, ich schwimme gern.", "Do you like sport? — Yes, I like swimming."],
+  ["Freizeit", "Wochenende", "Was machst du am Wochenende?", "Am Wochenende sehe ich Filme.", "What do you do at the weekend? — I watch films."],
+  ["Freizeit", "Kino", "Wie oft gehst du ins Kino?", "Ich gehe einmal pro Woche ins Kino.", "How often do you go to the cinema? — Once a week."],
+  ["Freizeit", "Musik", "Welche Musik hörst du gern?", "Ich höre gern Popmusik.", "Which music do you like? — Pop."],
+  ["Freizeit", "Buch", "Liest du gern Bücher?", "Ja, ich lese gern Romane.", "Do you like reading? — Yes, novels."],
+  ["Freizeit", "Freunde", "Was machst du mit deinen Freunden?", "Wir gehen zusammen essen.", "What do you do with friends? — We eat out together."],
+  ["Reisen", "Urlaub", "Wohin fährst du im Urlaub?", "Ich fahre nach Japan.", "Where do you go on holiday? — To Japan."],
+  ["Reisen", "Zug", "Fährst du gern mit dem Zug?", "Ja, der Zug ist schnell und bequem.", "Do you like taking the train? — Yes."],
+  ["Reisen", "Hotel", "Schläfst du im Urlaub im Hotel?", "Ja, ich schlafe im Hotel.", "Do you sleep in a hotel on holiday? — Yes."],
+  ["Reisen", "Flugzeug", "Fliegst du oft?", "Nein, nicht so oft. Zweimal pro Jahr.", "Do you fly often? — Twice a year."],
+  ["Reisen", "Land", "Welches Land möchtest du besuchen?", "Ich möchte Deutschland besuchen.", "Which country would you like to visit? — Germany."],
+  ["Einkaufen", "Supermarkt", "Wann gehst du in den Supermarkt?", "Ich gehe am Samstag in den Supermarkt.", "When do you go to the supermarket? — On Saturday."],
+  ["Einkaufen", "Kleidung", "Wo kaufst du Kleidung?", "Ich kaufe Kleidung im Internet.", "Where do you buy clothes? — Online."],
+  ["Einkaufen", "bezahlen", "Bezahlst du bar oder mit Karte?", "Ich bezahle mit dem Handy.", "Cash or card? — With my phone."],
+  ["Einkaufen", "teuer", "Was ist in Shanghai teuer?", "Die Wohnungen sind sehr teuer.", "What is expensive in Shanghai? — Flats."],
+  ["Studium", "Universität", "Wo studierst du?", "Ich studiere in Shanghai.", "Where do you study? — In Shanghai."],
+  ["Studium", "Fach", "Was studierst du?", "Ich studiere … (Wirtschaft).", "What do you study?"],
+  ["Studium", "Prüfung", "Hast du bald eine Prüfung?", "Ja, am Donnerstag habe ich eine Prüfung.", "Do you have an exam soon? — Yes, on Thursday."],
+  ["Studium", "Deutsch", "Warum lernst du Deutsch?", "Ich möchte nach Deutschland reisen.", "Why do you learn German?"]
+];
+const T3 = [
+  ["🪟", "Fenster", "Können Sie bitte das Fenster öffnen?", "Ja, gern.", "Open the window, please."],
+  ["💧", "Wasser", "Kann ich bitte ein Glas Wasser haben?", "Hier, bitte.", "A glass of water, please."],
+  ["🖊️", "Kuli", "Gib mir bitte deinen Kuli.", "Hier, bitte.", "Give me your pen, please."],
+  ["☕", "Kaffee", "Ich möchte bitte einen Kaffee.", "Gern. Mit Milch?", "I'd like a coffee, please."],
+  ["📱", "Handy", "Kann ich bitte dein Handy benutzen?", "Ja, natürlich.", "Can I use your phone?"],
+  ["💡", "Licht", "Kannst du bitte das Licht anmachen?", "Ja, klar.", "Turn on the light, please."],
+  ["🚪", "Tür", "Können Sie bitte die Tür schließen?", "Ja, sofort.", "Close the door, please."],
+  ["🔊", "Musik", "Kannst du bitte die Musik leiser machen?", "Ja, okay. Entschuldigung.", "Turn the music down, please."],
+  ["📖", "Buch", "Kannst du mir bitte das Buch geben?", "Hier, bitte.", "Give me the book, please."],
+  ["🧂", "Salz", "Gib mir bitte das Salz.", "Bitte schön.", "Pass me the salt, please."],
+  ["🚭", "nicht rauchen", "Bitte rauchen Sie hier nicht.", "Oh, Entschuldigung.", "Please don't smoke here."],
+  ["🕒", "Uhr", "Wie spät ist es, bitte?", "Es ist drei Uhr.", "What time is it, please?"],
+  ["🎫", "Fahrkarte", "Ich möchte bitte eine Fahrkarte nach Berlin.", "Gern. Das kostet 30 Euro.", "A ticket to Berlin, please."],
+  ["🧾", "Rechnung", "Die Rechnung, bitte.", "Moment, bitte.", "The bill, please."],
+  ["📄", "Papier", "Hast du bitte ein Blatt Papier für mich?", "Ja, hier.", "A sheet of paper for me, please?"],
+  ["☂️", "Regenschirm", "Hast du bitte einen Regenschirm für mich?", "Nein, tut mir leid.", "Do you have an umbrella for me?"],
+  ["🚕", "Taxi", "Können Sie mir bitte ein Taxi rufen?", "Ja, natürlich.", "Could you call me a taxi?"],
+  ["🍎", "Apfel", "Kann ich bitte einen Apfel haben?", "Ja, nimm bitte.", "Can I have an apple?"]
+];
+/* Writing part 1: [label, fixed value or null, accepted answers, hint] */
+const FORMS = [
+  { title: "Language school", text: "Ihre Freundin Mei Wang möchte in Berlin einen Deutschkurs machen. Sie ist 25 Jahre alt und arbeitet als Ingenieurin. Sie wohnt in der Hauptstraße 12 in 10115 Berlin. Sie möchte vormittags lernen. Sie bezahlt mit Kreditkarte.",
+    fields: [["Name", "Mei Wang"], ["Alter", null, ["25", "fünfundzwanzig"]], ["Beruf", null, ["ingenieurin"]], ["Straße", null, ["hauptstraße 12", "hauptstrasse 12"]],
+             ["Kurszeit", null, ["vormittags", "vormittag"], "vormittags / nachmittags / abends"], ["Bezahlung", null, ["kreditkarte", "mit kreditkarte"], "bar / Überweisung / Kreditkarte"]] },
+  { title: "Hotel booking", text: "Herr Peter Klein fährt mit seiner Frau und den zwei Kindern nach Hamburg. Sie kommen am 14. Mai an und bleiben drei Nächte. Sie möchten ein Zimmer mit Frühstück. Herr Klein bezahlt bar.",
+    fields: [["Name", "Peter Klein"], ["Personen", null, ["4", "vier"]], ["Ankunft", null, ["14. mai", "14 mai", "14.5.", "14.05.", "14.5", "14.05"]], ["Nächte", null, ["3", "drei"]],
+             ["Frühstück", null, ["ja"], "ja / nein"], ["Bezahlung", null, ["bar"], "bar / Karte"]] },
+  { title: "Sports club", text: "Ihr Freund Tom Becker, 19 Jahre alt, möchte im Sportverein Fußball spielen. Er wohnt in Köln. Seine Telefonnummer ist 0221 45 67 89. Er möchte am Dienstag und am Donnerstag trainieren.",
+    fields: [["Name", "Tom Becker"], ["Alter", null, ["19", "neunzehn"]], ["Wohnort", null, ["köln"]], ["Telefon", null, ["0221 45 67 89"]],
+             ["Sport", null, ["fußball", "fussball"]], ["Trainingstage", null, ["dienstag und donnerstag", "dienstag, donnerstag", "di und do", "dienstag donnerstag"]]] }
+];
+/* Writing part 2 tasks */
+const MSGS = [
+  { task: "Your friend Lisa invites you to her birthday party on Saturday. You cannot come.", points: ["Thank her", "Say why you cannot come", "Suggest another day"],
+    model: "Liebe Lisa,\nvielen Dank für deine Einladung! Leider kann ich am Samstag nicht kommen, denn ich habe eine Prüfung. Können wir am Sonntag zusammen Kaffee trinken?\nViele Grüße\nJinyi" },
+  { task: "You want to take a German course. Write to the language school.", points: ["When does the next course start?", "What does it cost?", "Is there a course in the evening?"],
+    model: "Sehr geehrte Damen und Herren,\nich möchte einen Deutschkurs machen. Wann beginnt der nächste Kurs? Was kostet der Kurs? Gibt es auch Kurse am Abend?\nMit freundlichen Grüßen\nJinyi Lu" },
+  { task: "You are in Berlin next week. Write to your friend Tom.", points: ["Say when you are in Berlin", "Ask if he has time to meet", "Ask for a good restaurant"],
+    model: "Lieber Tom,\nich bin nächste Woche von Montag bis Freitag in Berlin. Hast du Zeit? Wir können uns treffen. Kennst du ein gutes Restaurant?\nViele Grüße\nJinyi" },
+  { task: "You have a doctor's appointment on Monday. You cannot come.", points: ["Apologise", "Say why", "Ask for a new appointment"],
+    model: "Sehr geehrte Damen und Herren,\nleider kann ich am Montag nicht zum Termin kommen. Ich bin krank und habe Fieber. Haben Sie am Mittwoch einen neuen Termin für mich?\nMit freundlichen Grüßen\nJinyi Lu" }
+];
+
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+/* German text-to-speech: works where the browser has a German voice. */
+const canSpeak = "speechSynthesis" in window;
+let playing = null; // the button whose text is being read
+function stop() {
+  try { speechSynthesis.cancel(); } catch (e) {}
+  if (playing) { playing.innerHTML = playing.dataset.label; playing.setAttribute("aria-pressed", "false"); }
+  playing = null;
+}
+function say(text, btn) {
+  if (!canSpeak) return;
+  try {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "de-DE"; u.rate = 0.85;
+    const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.startsWith("de"));
+    if (v) u.voice = v;
+    u.onend = u.onerror = () => { if (playing === btn) stop(); };
+    playing = btn;
+    btn.dataset.label = btn.innerHTML;
+    btn.innerHTML = "⏹ Stop";
+    btn.setAttribute("aria-pressed", "true");
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+const speakBtn = text => canSpeak ? `<button class="btn speak" data-say="${esc(text)}">🔊</button>` : "";
+/* Tap a 🔊 button to play; tap it again (or any other) to stop. */
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-say]");
+  if (!b) return;
+  const same = playing === b;
+  stop();
+  if (same) return;
+  say(b.dataset.say === "intro" ? INTRO.map(r => r[1]).join(" ") : b.dataset.say, b);
+});
+document.addEventListener("click", e => { if (e.target.closest("[data-act], nav button")) stop(); }, true);
+
+/* Speaking 1 */
+$("#introList").innerHTML = INTRO.map(([k, de, en]) =>
+  `<dt>${k}</dt><dd><div class="say-row"><span class="de">${de}</span>${speakBtn(de)}</div><div class="en">${en}</div></dd>`).join("");
+$("#followList").innerHTML = FOLLOW.map(([q, a, en]) =>
+  `<div class="item"><span class="k">${en}</span><div class="say-row"><span class="de">${q}</span>${speakBtn(q)}</div><div class="say-row"><span class="en">→ ${a}</span>${speakBtn(a.replace(/\(.*?\)/g, ""))}</div></div>`).join("");
+
+/* Shuffled card decks */
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function deck(el, data, render, shuffled = true) {
+  let order = shuffled ? shuffle(data.map((_, i) => i)) : data.map((_, i) => i), pos = 0, open = false;
+  const draw = () => { el.innerHTML = render(data[order[pos]], open, pos + 1, data.length); };
+  el.addEventListener("click", e => {
+    const a = e.target.closest("[data-act]");
+    if (!a) return;
+    if (a.dataset.act === "show") open = true;
+    else if (a.dataset.act === "next") { open = false; pos++; if (pos >= order.length) { order = shuffled ? shuffle(order) : order; pos = 0; } }
+    else return;
+    draw();
+  });
+  draw();
+}
+const controls = (open, showLabel = "Show answer", nextLabel = "Next card →") => `
+  <div class="row">
+    ${open ? "" : `<button class="btn primary" data-act="show">${showLabel}</button>`}
+    <button class="btn" data-act="next">${nextLabel}</button>
+  </div>`;
+
+deck($("#t2card"), T2, ([topic, word, q, a, en], open, n, total) => `
+  <div class="cardtop"><span class="topic">Thema: ${topic}</span><span class="counter">${n} / ${total}</span></div>
+  <div class="cue">${word}</div>
+  <p class="task">Make a question with this word. Then answer it yourself.</p>
+  ${open ? `<div class="answer">
+    <div class="line"><span class="who">You ask</span><div class="say-row"><span class="de">${q}</span>${speakBtn(q)}</div></div>
+    <div class="line"><span class="who">Partner answers</span><div class="say-row"><span class="de">${a}</span>${speakBtn(a)}</div></div>
+    <span class="en">${en}</span></div>` : ""}
+  ${controls(open)}`);
+
+deck($("#t3card"), T3, ([pic, word, q, a, en], open, n, total) => `
+  <div class="cardtop"><span class="topic">Picture card</span><span class="counter">${n} / ${total}</span></div>
+  <div class="cue"><span class="pic" aria-hidden="true">${pic}</span>${open ? `<span class="gloss">${word}</span>` : ""}</div>
+  <p class="task">Make a polite request. Then say how your partner reacts.</p>
+  ${open ? `<div class="answer">
+    <div class="line"><span class="who">You ask</span><div class="say-row"><span class="de">${q}</span>${speakBtn(q)}</div></div>
+    <div class="line"><span class="who">Partner reacts</span><div class="say-row"><span class="de">${a}</span>${speakBtn(a)}</div></div>
+    <span class="en">${en}</span></div>` : ""}
+  ${controls(open)}`);
+
+$("#t2list").innerHTML = T2.map(([t, w, q, a]) =>
+  `<div class="item"><span class="k">${t} · ${w}</span><span class="de">${q}</span><span class="en">→ ${a}</span></div>`).join("");
+$("#t3list").innerHTML = T3.map(([p, w, q, a]) =>
+  `<div class="item"><span class="k">${p} ${w}</span><span class="de">${q}</span><span class="en">→ ${a}</span></div>`).join("");
+
+/* Writing part 1: form with checking */
+const norm = s => s.toLowerCase().replace(/\s+/g, " ").trim().replace(/[.]$/, "");
+let formIdx = 0;
+function drawForm() {
+  const f = FORMS[formIdx];
+  $("#formCard").innerHTML = `
+    <div class="cardtop"><span class="topic">Part 1 · Form — ${f.title}</span><span class="counter">${formIdx + 1} / ${FORMS.length}</span></div>
+    <p class="source" lang="de">${f.text}</p>
+    <div class="form">${f.fields.map(([lab, fixed, ok, hint], i) => `
+      <div class="field">
+        <label for="f${formIdx}-${i}">${lab}</label>
+        ${fixed ? `<span class="fix">${fixed}</span><span class="hint">Example, already filled in.</span>`
+                : `<input type="text" id="f${formIdx}-${i}" autocomplete="off" autocapitalize="off" spellcheck="false">${hint ? `<span class="hint">${hint}</span>` : ""}<span class="fb" id="fb${formIdx}-${i}"></span>`}
+      </div>`).join("")}</div>
+    <div class="row"><button class="btn primary" data-form="check">Check</button><button class="btn" data-form="next">Next form →</button></div>`;
+}
+$("#formCard").addEventListener("click", e => {
+  const b = e.target.closest("[data-form]");
+  if (!b) return;
+  if (b.dataset.form === "next") { formIdx = (formIdx + 1) % FORMS.length; drawForm(); return; }
+  FORMS[formIdx].fields.forEach(([lab, fixed, ok], i) => {
+    if (fixed) return;
+    const inp = $(`#f${formIdx}-${i}`), fb = $(`#fb${formIdx}-${i}`);
+    const val = norm(inp.value), good = ok.some(a => norm(a) === val || (lab === "Telefon" && val.replace(/\D/g, "") === a.replace(/\D/g, "")));
+    inp.classList.toggle("ok", good); inp.classList.toggle("bad", !good);
+    fb.className = "fb " + (good ? "okt" : "badt");
+    fb.textContent = good ? "✓ Right" : `✗ Answer: ${ok[0].replace(/^./, c => c.toUpperCase())}`;
+  });
+});
+drawForm();
+
+/* Writing part 2: message with word count and model */
+deck($("#msgCard"), MSGS, (m, open, n, total) => `
+  <div class="cardtop"><span class="topic">Part 2 · Write a message</span><span class="counter">${n} / ${total}</span></div>
+  <p><strong>${m.task}</strong> Write about 30 words:</p>
+  <ul class="check">${m.points.map(p => `<li>${p}</li>`).join("")}</ul>
+  <textarea id="msg${n}" lang="de" placeholder="Liebe … / Sehr geehrte Damen und Herren, …" spellcheck="false"></textarea>
+  <span class="wc" data-wc>0 words — aim for about 30</span>
+  ${open ? `<div class="answer"><span class="lbl">Model answer</span><p class="model" lang="de">${m.model}</p>
+    <span class="en">Check: greeting? all 3 points? closing? Nouns with capital letters?</span></div>` : ""}
+  ${controls(open, "Show model answer", "Next task →")}`, false);
+/* keep the typed text when the model answer is opened */
+let draft = "";
+$("#msgCard").addEventListener("input", e => {
+  if (e.target.tagName !== "TEXTAREA") return;
+  draft = e.target.value;
+  const n = (draft.trim().match(/\S+/g) || []).length;
+  $("#msgCard [data-wc]").textContent = `${n} words — aim for about 30`;
+});
+$("#msgCard").addEventListener("click", e => {
+  const a = e.target.closest("[data-act]");
+  if (!a) return;
+  if (a.dataset.act === "next") draft = "";
+  const ta = $("#msgCard textarea");
+  if (ta) { ta.value = draft; ta.dispatchEvent(new Event("input", { bubbles: true })); }
+});
+
+/* Tabs (remembered per viewer) */
+const IDS = ["t1", "t2", "t3", "w", "d"];
+const tabs = document.querySelectorAll("nav [data-t]");
+function show(id) {
+  tabs.forEach(b => b.setAttribute("aria-selected", b.dataset.t === id ? "true" : "false"));
+  IDS.forEach(t => $("#" + t).hidden = t !== id);
+  try { localStorage.setItem("tab", id); } catch (e) {}
+}
+tabs.forEach(b => b.addEventListener("click", () => show(b.dataset.t)));
+const hashTab = IDS.includes(location.hash.slice(1)) ? location.hash.slice(1) : null;
+let saved = null; try { saved = localStorage.getItem("tab"); } catch (e) {}
+show(hashTab || (IDS.includes(saved) ? saved : "t1"));
+
+/* Countdown to 5 Nov 09:00 China time (01:00 UTC) */
+const examAt = Date.UTC(2026, 10, 5, 1, 0);
+function tick() {
+  const ms = examAt - Date.now();
+  if (ms <= 0) { $("#countdown").textContent = "Viel Erfolg!"; return; }
+  const h = Math.floor(ms / 3.6e6), d = Math.floor(h / 24);
+  $("#countdown").textContent = `About ${d} days ${h % 24} hours left.`;
+}
+tick(); setInterval(tick, 60000);
+</script>
+</body>
+</html>
