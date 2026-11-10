@@ -1,6 +1,10 @@
 ---
 title: News radar
 oneLiner: Reworking an open-source news scorer into a three-domain morning briefing — and cutting its running cost by four fifths.
+short: 'A morning briefing that scores the news before I read it.'
+tag: Information
+why: >-
+  I was reading too much news and remembering too little. I wanted one short briefing at breakfast, sorted by what matters to me, with the reasons shown.
 role: adapted
 upstream: https://github.com/Thysrael/Horizon
 period: '2026'
@@ -26,7 +30,7 @@ metrics:
     value: '4'
     note: tech, securities, politics, general — selected per source
 sanitized: true
-reviewed: 2026-07-27
+reviewed: 2026-11-10
 ---
 
 ## Provenance, first

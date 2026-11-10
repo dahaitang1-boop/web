@@ -1,75 +1,178 @@
 ---
 import Base from '../layouts/Base.astro';
+
+const jobs = [
+  {
+    org: 'TikTok',
+    role: 'EMEA Senior Content Strategy Operation Manager',
+    where: 'Berlin',
+    when: '2023 – 2025',
+    what: 'Led content quality, safety, and diversity strategy for TikTok LIVE across France, Italy, and Spain. Launched the LIVE Gaming vertical in France with game publishers and local creators.',
+  },
+  {
+    org: 'TikTok',
+    role: 'EMEA Ecosystem Governance Product Operation Manager',
+    where: 'Beijing',
+    when: '2022 – 2023',
+    what: 'Co-led the rollout of a new content ecosystem governance framework. Merged close to 10 fragmented escalation channels into one entry point.',
+  },
+  {
+    org: 'Gauth (ByteDance)',
+    role: 'User Growth Operation Manager',
+    where: 'Beijing',
+    when: '2021',
+    what: 'Ran data-driven go-to-market and creator-led acquisition across the Americas and EMEA.',
+  },
+  {
+    org: 'Lumist',
+    role: 'Founding Member, Head of North American Operations',
+    where: 'Toronto',
+    when: '2018 – 2020',
+    what: 'Founded and scaled North American operations across user growth, UX, and business development.',
+  },
+];
 ---
 
 <Base
   title="About"
-  description="Dahai Tang — engineer in Berlin. Previously TikTok Berlin, 2021–2025."
+  description="Dahai Tang — strategy and operations in Berlin. Previously TikTok, Gauth, Lumist. I build my own systems with AI."
+  showNav
 >
   <article class="wrap">
     <header class="head">
-      <p class="k">Berlin, Germany</p>
       <h1 class="disp">About</h1>
+      <p class="lede">
+        I work in strategy and operations. I also build my own tools with AI.
+      </p>
     </header>
 
     <div class="prose">
       <p>
-        I'm an engineer in Berlin. I spent four and a half years at TikTok's
-        Berlin office, from April 2021 to September 2025.
+        I have spent eight years in strategy and operations, at startups and at
+        global tech companies. My work sits between product, policy, data, and
+        the local market teams. I turn a messy problem into a process people
+        can run.
       </p>
-
       <p>
-        The projects on this site all come from the same habit: when a part of
-        my own life got complicated enough to keep dropping things, I built the
-        smallest system that would hold it. A morning briefing that scores news
-        against rubrics instead of a single relevance score. A constraint solver
-        for alpine hut bookings. A deadline registry that renders itself into a
-        single static page with no server behind it.
+        A while ago I started doing the same thing for my own life. When a part
+        of it got complicated enough that I kept dropping things, I built the
+        smallest system that would hold it. I am not a trained engineer. I
+        build with AI coding tools, and I write down what I learn.
       </p>
-
       <p>
-        Building for exactly one known user is a strange constraint and a
-        clarifying one. There is no persona to design against and no roadmap to
-        hide behind — the tool either survives contact with the actual week or
-        it gets deleted. Most of what I would defend in these write-ups comes
-        from that: the failure modes I chose to make loud, the numbers I record
-        instead of a yes/no, the things I deliberately did not automate.
+        I studied in Toronto and now live in Berlin. I speak Mandarin and
+        English, and I am learning German.
       </p>
+    </div>
 
-      <h2>How this site is built</h2>
+    <h2 class="disp sec">Experience</h2>
+    <ol class="cv">
+      {
+        jobs.map((j) => (
+          <li>
+            <span class="when">{j.when}</span>
+            <div>
+              <h3>
+                {j.org} <span>· {j.where}</span>
+              </h3>
+              <p class="role">{j.role}</p>
+              <p>{j.what}</p>
+            </div>
+          </li>
+        ))
+      }
+      <li>
+        <span class="when">2018</span>
+        <div>
+          <h3>University of Toronto</h3>
+          <p class="role">Double major in Statistics and East Asian Studies</p>
+        </div>
+      </li>
+    </ol>
 
+    <h2 class="disp sec">How this site is built</h2>
+    <div class="prose">
       <p>
-        Astro, no analytics, no cookies, deployed as static files. The
-        interactive artifacts are published as the original single HTML files
-        rather than ported into components — they were designed to be
-        downloaded and opened offline, and that property is the point.
+        Static files, no analytics, no cookies. Before every build a scanner
+        checks the whole site for private details and stops the build if it
+        finds any. I wrote about that
+        <a href="/writing/privacy-gate/">here</a>.
       </p>
+    </div>
 
-      <p>
-        Because the source material lives alongside genuinely private records,
-        every build runs a scanner first: a deny-by-default pass over the whole
-        tree that fails the build on booking numbers, identity numbers,
-        credentials and a short list of things that must never be published.
-        Anything legitimately public — a mountain hut's own phone number — is
-        allowlisted individually, with a written reason. The check is wired into
-        the build script itself, so skipping the commit hook doesn't skip the
-        gate.
-      </p>
-
-      <h2>Contact</h2>
-      <p>
-        <a href="mailto:dahai.tang1@gmail.com">dahai.tang1@gmail.com</a> ·
-        <a href="https://github.com/dahaitang1-boop" rel="me noopener">GitHub</a>
-      </p>
+    <div class="contact tone-sand">
+      <h2 class="disp">Say hi</h2>
+      <div class="btn-row">
+        <a class="btn solid" href="mailto:dahai.tang1@gmail.com">E-mail me</a>
+        <a class="btn" href="https://www.linkedin.com/in/dahaitang" rel="me noopener">LinkedIn</a>
+        <a class="btn" href="https://github.com/dahaitang1-boop" rel="me noopener">GitHub</a>
+      </div>
     </div>
   </article>
 </Base>
 
 <style>
   article {
-    padding-block: 2.5rem;
+    padding-block: 2.5rem 0;
   }
-  .head h1 {
-    margin-top: 0.5rem;
+  .head {
+    margin-bottom: 1.5rem;
+  }
+  .prose p {
+    font-size: 1.08rem;
+  }
+  .sec {
+    margin: 3.5rem 0 1.25rem;
+  }
+  .cv {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 52rem;
+  }
+  .cv li {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 0.25rem 1.5rem;
+    padding: 1.2rem 0;
+    border-top: 1.5px solid var(--border);
+  }
+  .when {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding-top: 0.2rem;
+  }
+  .cv h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    letter-spacing: -0.015em;
+  }
+  .cv h3 span {
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .cv p {
+    margin: 0.3rem 0 0;
+    color: var(--ink-dim);
+  }
+  .cv .role {
+    margin-top: 0.1rem;
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 0.97rem;
+  }
+  .contact {
+    border-radius: 28px;
+    padding: clamp(1.75rem, 5vw, 3rem);
+    margin-top: 3.5rem;
+  }
+  .contact h2 {
+    margin: 0 0 1.25rem;
+  }
+  @media (max-width: 560px) {
+    .cv li {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

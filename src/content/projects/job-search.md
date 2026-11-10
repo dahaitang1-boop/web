@@ -1,6 +1,10 @@
 ---
-title: Job-search workspace
-oneLiner: Three board clients, a drafter/reviewer loop producing typeset applications, and a cost policy for an agent workspace.
+title: Application workflow
+oneLiner: A drafter and reviewer loop that produces typeset documents, with checks that can actually fail and a written cost policy.
+short: 'A repeatable process with a reviewer step and a cost limit.'
+tag: Career
+why: >-
+  Applications are repetitive work with real quality rules. I wanted a process that checks fit first, drafts second, and has a second reader before anything goes out. I also wanted to know what each run costs.
 role: fork + rework
 upstream: https://github.com/MadsLorentzen/ai-job-search
 period: '2026'
@@ -23,14 +27,14 @@ metrics:
     value: '3'
     note: pinned per step, so an expensive session cannot silently upgrade the cheap ones
 sanitized: true
-reviewed: 2026-07-27
+reviewed: 2026-11-10
 ---
 
 ## Provenance
 
 A fork of [MadsLorentzen/ai-job-search](https://github.com/MadsLorentzen/ai-job-search). The upstream project supplies the shape: an agent workspace where applications are scraped, ranked, drafted and reviewed as a sequence of defined steps rather than a single prompt.
 
-My rework replaced the Danish job portals with German ones, swapped the CV template, added a compliance export, and imposed a cost policy. The repository itself stays private — it holds actual CVs and an application log — so this is a write-up rather than a link.
+My rework replaced the Danish job portals with German ones, swapped the document template, and imposed a cost policy. The repository itself stays private — it holds personal documents — so this is a write-up rather than a link.
 
 ## The workspace is mostly prose
 
@@ -63,8 +67,6 @@ Documents are produced by a drafter, then passed to a reviewer working from a di
 - **No orphaned entries** — a role title stranded at the foot of a page with its content overleaf.
 - **No keyword stuffing.** Tempting, detectable, and it reads as desperate to the human who eventually opens it.
 - **Every factual claim must trace to the source CV.** A drafting model asked to tailor will embellish if nothing stops it, and an embellishment you did not notice is one you will have to defend in an interview.
-
-There is also a compliance export: the application log renders into a fixed tabular format required as proof of activity. Unremarkable as engineering — structured records into a defined layout — but it is why the log is maintained rigorously rather than when convenient, and that rigour is what makes every other statistic in the system true.
 
 ## A cost policy, written down
 

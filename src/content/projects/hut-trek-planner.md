@@ -1,6 +1,10 @@
 ---
 title: Hut-trek planner
 oneLiner: A constraint solver for alpine hut bookings, and a single-file planner that still works when the signal doesn't.
+short: 'Books a week of alpine huts as one chain. Works with no signal.'
+tag: Outdoors
+why: >-
+  Popular alpine routes sell out hut by hut. One full hut can break a whole week. I wanted a plan that closes the chain of bookings first, and a map I can open on the mountain without a signal.
 role: sole author
 period: 2025 – 2026
 stack:
@@ -34,7 +38,7 @@ artifact:
     hand-drawn SVG; the topo layer behind the toggle is the only thing that
     ever touches the network.
 sanitized: true
-reviewed: 2026-07-27
+reviewed: 2026-11-10
 ---
 
 ## The problem is a chain, not a list

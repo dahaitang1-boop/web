@@ -1,0 +1,52 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Privacy" description="What this site collects: nothing beyond standard server logs." showNav>
+  <article class="wrap">
+    <h1 class="disp">Privacy</h1>
+    <div class="prose">
+      <p>This is a personal website. It is run by Dahai Tang, Berlin, Germany.</p>
+
+      <h2>What this site collects</h2>
+      <p>
+        Nothing on purpose. There are no analytics, no cookies, no tracking
+        pixels, no forms, and no accounts.
+      </p>
+
+      <h2>Hosting</h2>
+      <p>
+        The site is served as static files by Cloudflare. Like any web host,
+        Cloudflare processes your IP address and basic request data to deliver
+        the page and to protect the service. I do not use that data to identify
+        visitors.
+      </p>
+
+      <h2>Fonts</h2>
+      <p>Fonts are served from this site. No request goes to a font provider.</p>
+
+      <h2>The trek planner</h2>
+      <p>
+        The interactive trek planner runs in your browser. If you press the
+        location button, your position stays on your device. If you switch on
+        the topographic map layer, map tiles are loaded from an external map
+        server, which then sees your IP address.
+      </p>
+
+      <h2>Links and e-mail</h2>
+      <p>
+        Links to LinkedIn and GitHub take you to those services, which have
+        their own policies. If you e-mail me, I use your message only to reply.
+      </p>
+
+      <h2>Contact</h2>
+      <p><a href="mailto:dahai.tang1@gmail.com">dahai.tang1@gmail.com</a></p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  article {
+    padding-block: 2.5rem 0;
+  }
+</style>

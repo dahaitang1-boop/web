@@ -1,29 +1,35 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import SystemList from '../../components/SystemList.astro';
+import SystemCards from '../../components/SystemCards.astro';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 ---
 
 <Base
   title="Systems"
-  description="Six systems built to run one person's life: news intake, job search, document and deadline admin, finance, trek planning, memoir."
+  description="Six small systems I built to run my own life: trek planning, news, life admin, finance, applications, memoir."
+  showNav
 >
   <section class="wrap head">
-    <h1 class="disp">Systems</h1>
+    <h1 class="disp">Things I built</h1>
     <p class="lede">
-      Six of them. Each solves a problem I actually had, and each is still in use.
+      Six small systems. Each one fixes a problem I actually had, and each is
+      still in use. I built them with AI coding tools, as an operations person,
+      not as a trained engineer.
     </p>
   </section>
 
   <section class="wrap">
-    <SystemList projects={projects} />
+    <SystemCards projects={projects} />
   </section>
 </Base>
 
 <style>
   .head {
-    padding-block: 2.5rem 0;
+    padding-block: 2.5rem 2rem;
+  }
+  .head .lede {
+    max-width: 56ch;
   }
 </style>

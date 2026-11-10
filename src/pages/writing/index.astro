@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+
+const posts = (await getCollection('writing')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<Base
+  title="Writing"
+  description="Short notes from an operations person who builds with AI: what works and what does not."
+  showNav
+>
+  <section class="wrap head">
+    <h1 class="disp">Writing</h1>
+    <p class="lede">Short notes on what works and what does not.</p>
+  </section>
+  <section class="wrap">
+    <PostList posts={posts} />
+  </section>
+</Base>
+
+<style>
+  .head {
+    padding-block: 2.5rem 2rem;
+  }
+</style>

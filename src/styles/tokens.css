@@ -1,7 +1,4 @@
-/* Warm-paper light theme: ivory ground, charcoal ink, terracotta accent,
-   serif display over sans body. One deliberate look — light only. The
-   embedded artifacts (paper-coloured topo planner) share the same family,
-   so site and artifact read as one continuous document. */
+/* Site tokens and shared classes. Light only. */
 
 /* Archivo ExtraBold — the brand face. SIL Open Font License 1.1, free for
    commercial use including logos, no attribution required.
@@ -20,41 +17,45 @@
   src: url('/fonts/archivo-800-latin.woff2') format('woff2');
 }
 
-/* Brand palette comes from the logo specification:
-   ink #191919 · paper #EEECE2 · terracotta full stop #CC785C.
-   The full stop is the only ornament in the identity — never add another. */
-
 :root {
-  --bg: #faf9f5; /* page — warm ivory */
-  --bg-deep: #eeece2; /* brand paper: bands, code wells, callouts */
+  /* 2026-11 redesign: white ground, near-black ink, electric blue accent,
+     pastel colour blocks for the system cards. Display type is Archivo 800. */
+  --bg: #ffffff;
+  --bg-deep: #f4f5f7; /* bands, code wells, callouts */
   --surface: #ffffff;
-  --border: #e3dfd4;
-  --border-strong: #cbc5b6;
+  --border: #e8e8ea;
+  --border-strong: #111214;
 
-  --ink: #191919; /* brand ink */
-  --ink-dim: #4f4d48;
-  --muted: #6e6b64;
+  --ink: #111214;
+  --ink-dim: #3d4046;
+  --muted: #6a6d74;
 
-  --accent: #cc785c; /* brand terracotta — the full stop, links, figures */
-  --accent-deep: #a4553b; /* hover state */
+  --accent: #2b46ff;
+  --accent-deep: #1a2fd0;
+  --accent-soft: #c9d2ff;
   --alert: #b3261e;
 
-  /* Archivo is the brand face (SIL OFL). Self-hosted in /fonts — never
-     hot-linked from Google Fonts: serving a German-resident public site
-     from fonts.googleapis.com passes visitor IPs to Google and has been
-     held to breach the GDPR (LG München I, 20 Jan 2022, 3 O 17493/20). */
+  --mint: #d9f5e5;
+  --sky: #dcebff;
+  --sand: #fbefd0;
+  --lilac: #e9e2ff;
+  --peach: #ffe3d3;
+  --rose: #ffdfe8;
+
+  /* Archivo is self-hosted in /fonts — never hot-linked from Google Fonts
+     (GDPR: LG München I, 20 Jan 2022, 3 O 17493/20). */
   --brand: Archivo, 'Helvetica Neue', 'Arial Narrow', Helvetica, Arial,
     sans-serif;
-  --serif: ui-serif, 'Iowan Old Style', 'Palatino Nova', Palatino, Georgia,
-    'Times New Roman', serif;
+  /* Kept as a variable name for older components; it is the display face now. */
+  --serif: var(--brand);
   --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto,
     'Helvetica Neue', Arial, sans-serif;
   --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
     'Liberation Mono', monospace;
 
-  --r: 12px; /* card radius */
-  --w: 64rem;
-  --pad: clamp(1.25rem, 4vw, 3rem);
+  --r: 18px; /* card radius */
+  --w: 70rem;
+  --pad: clamp(1.25rem, 4vw, 2.5rem);
 
   color-scheme: light;
 }
@@ -104,22 +105,22 @@ kbd,
 
 /* --- type ---------------------------------------------------------------- */
 
-/* Display: quiet serif, normal case, tight leading. */
+/* Display: Archivo 800, tight. */
 .disp {
-  font-family: var(--serif);
-  font-weight: 500;
-  letter-spacing: -0.015em;
-  line-height: 1.12;
+  font-family: var(--brand);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1.04;
   text-transform: none;
 }
 
 h1.disp {
-  font-size: clamp(2.2rem, 7vw, 3.9rem);
+  font-size: clamp(2.3rem, 6.5vw, 4.4rem);
   margin: 0;
 }
 
 h2.disp {
-  font-size: 1.35rem;
+  font-size: clamp(1.7rem, 4vw, 2.6rem);
   color: var(--ink);
   margin: 0 0 1rem;
 }
@@ -134,10 +135,10 @@ h2.disp {
 
 /* Eyebrow label. */
 .k {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: var(--muted);
 }
 .k a {
@@ -157,9 +158,8 @@ h2.disp {
 
 .rule-double {
   border: 0;
-  border-top: 1px solid var(--border-strong);
-  border-bottom: 1px solid var(--border-strong);
-  height: 3px;
+  border-top: 1.5px solid var(--ink);
+  height: 0;
   margin: 2rem 0;
   background: none;
 }
@@ -176,13 +176,13 @@ h2.disp {
 }
 
 .chip {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.03em;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
   color: var(--ink-dim);
-  border: 1px solid var(--border);
-  background: var(--surface);
-  padding: 0.22rem 0.7rem;
+  border: 0;
+  background: var(--bg-deep);
+  padding: 0.25rem 0.8rem;
   border-radius: 999px;
   white-space: nowrap;
 }
@@ -193,10 +193,11 @@ h2.disp {
   max-width: 68ch;
 }
 .prose h2 {
-  font-family: var(--serif);
-  font-size: 1.45rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
+  font-family: var(--brand);
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
   color: var(--ink);
   margin: 2.75rem 0 0.75rem;
 }
@@ -231,7 +232,7 @@ h2.disp {
   padding: 0;
 }
 .prose blockquote {
-  border-left: 2px solid var(--accent);
+  border-left: 3px solid var(--accent);
   margin: 1.5rem 0;
   padding-left: 1rem;
   color: var(--muted);
@@ -248,11 +249,9 @@ h2.disp {
   vertical-align: top;
 }
 .prose th {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink);
 }
 
 /* Wide things scroll inside themselves; the page body never scrolls sideways. */
@@ -292,3 +291,42 @@ h2.disp {
   border: 1px solid var(--accent);
   padding: 0.5rem 0.75rem;
 }
+
+/* --- buttons ------------------------------------------------------------- */
+
+.btn {
+  display: inline-block;
+  border: 1.5px solid var(--ink);
+  border-radius: 14px;
+  padding: 0.7rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.98rem;
+  color: var(--ink);
+  background: #fff;
+  text-decoration: none;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.btn:hover {
+  color: var(--ink);
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+.btn.solid {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* --- colour blocks ------------------------------------------------------- */
+
+.tone-mint { background: var(--mint); }
+.tone-sky { background: var(--sky); }
+.tone-sand { background: var(--sand); }
+.tone-lilac { background: var(--lilac); }
+.tone-peach { background: var(--peach); }
+.tone-rose { background: var(--rose); }

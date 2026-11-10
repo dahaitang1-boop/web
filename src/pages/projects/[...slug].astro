@@ -22,12 +22,17 @@ const repoLabel: Record<typeof d.repoStatus, string> = {
 };
 ---
 
-<Base title={d.title} description={d.oneLiner}>
+<Base title={d.title} description={d.oneLiner} showNav>
   <article class="wrap">
     <header class="head">
-      <p class="k">{d.period} · {repoLabel[d.repoStatus]}</p>
+      <p class="k"><a href="/projects/">← Systems</a> · {d.tag} · {d.period}</p>
       <h1 class="disp">{d.title}</h1>
-      <p class="lede">{d.oneLiner}</p>
+      <p class="lede">{d.short}</p>
+
+      <div class="why">
+        <span class="k">Why I built it</span>
+        <p>{d.why}</p>
+      </div>
 
       {
         d.role !== 'sole author' && d.upstream && (
@@ -50,6 +55,9 @@ const repoLabel: Record<typeof d.repoStatus, string> = {
         )
       }
     </header>
+
+    <h2 class="disp tech">How it works</h2>
+    <p class="tech-note">{d.oneLiner} The rest of this page is the technical write-up.</p>
 
     {d.metrics.length > 0 && <MetricGrid metrics={d.metrics} />}
 
@@ -96,5 +104,28 @@ const repoLabel: Record<typeof d.repoStatus, string> = {
   }
   .stack {
     margin-top: 1.25rem;
+  }
+  .why {
+    background: var(--sky);
+    border-radius: 22px;
+    padding: 1.25rem 1.5rem 1.4rem;
+    margin-top: 1.75rem;
+    max-width: 68ch;
+  }
+  .why .k {
+    color: var(--ink);
+  }
+  .why p {
+    margin: 0.35rem 0 0;
+    font-size: 1.08rem;
+    line-height: 1.55;
+  }
+  .tech {
+    margin: 3rem 0 0.25rem;
+  }
+  .tech-note {
+    color: var(--muted);
+    max-width: 68ch;
+    margin: 0;
   }
 </style>

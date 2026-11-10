@@ -1,0 +1,75 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  posts: CollectionEntry<'writing'>[];
+}
+const { posts } = Astro.props;
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', timeZone: 'UTC' });
+---
+
+<ul class="posts">
+  {
+    posts.map((p) => (
+      <li>
+        <a href={`/writing/${p.id}/`}>
+          <span class="t">{p.data.title}</span>
+          <span class="b">{p.data.blurb}</span>
+          <span class="d">{fmt(p.data.date)}</span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .posts {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-bottom: 1.5px solid var(--border);
+  }
+  a {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.2rem 1.5rem;
+    padding: 1.15rem 0;
+    border-top: 1.5px solid var(--border);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .t {
+    font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+  }
+  a:hover .t {
+    color: var(--accent);
+  }
+  .b {
+    grid-column: 1;
+    color: var(--muted);
+    font-size: 0.97rem;
+    max-width: 60ch;
+  }
+  .d {
+    grid-column: 2;
+    grid-row: 1;
+    color: var(--muted);
+    font-size: 0.85rem;
+    white-space: nowrap;
+    padding-top: 0.35rem;
+  }
+  @media (max-width: 560px) {
+    a {
+      grid-template-columns: 1fr;
+    }
+    .d {
+      grid-column: 1;
+      grid-row: auto;
+      padding-top: 0;
+    }
+  }
+</style>

@@ -7,6 +7,12 @@ const projects = defineCollection({
     title: z.string(),
     /** The claim a recruiter can scan in one breath. */
     oneLiner: z.string().max(140),
+    /** Homepage card: a short line and a one-word tag for a reader who is
+     *  not an engineer. */
+    short: z.string().max(90),
+    tag: z.string().max(16),
+    /** Plain-language "why I built this", shown at the top of the page. */
+    why: z.string().max(420),
 
     /** Honesty gate. If this work sits on top of someone else's engine, say so
      *  here and the upstream URL becomes mandatory below. This is what keeps
@@ -48,4 +54,16 @@ const projects = defineCollection({
     }),
 });
 
-export const collections = { projects };
+const writing = defineCollection({
+  loader: glob({ base: './src/content/writing', pattern: '**/*.md' }),
+  schema: z.object({
+    title: z.string(),
+    blurb: z.string().max(160),
+    date: z.coerce.date(),
+    /** Same hard gate as projects: no `sanitized: true`, no build. */
+    sanitized: z.literal(true),
+    reviewed: z.coerce.date(),
+  }),
+});
+
+export const collections = { projects, writing };

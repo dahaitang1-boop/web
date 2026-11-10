@@ -17,4 +17,4 @@
  * To relaunch: set this to false, move index-full.astro back to index.astro,
  * and re-enable the sitemap integration in astro.config.mjs.
  */
-export const WIP = true;
+export const WIP = false;

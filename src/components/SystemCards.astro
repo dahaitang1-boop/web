@@ -1,0 +1,75 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+}
+const { projects } = Astro.props;
+const tones = ['mint', 'sky', 'sand', 'lilac', 'peach', 'rose'];
+---
+
+<div class="grid">
+  {
+    projects.map((p, i) => (
+      <a class:list={['card', `tone-${tones[i % tones.length]}`]} href={`/projects/${p.id}/`}>
+        <span class="tag">{p.data.tag}</span>
+        <h3>{p.data.title}</h3>
+        <p>{p.data.short}</p>
+        <span class="arrow" aria-hidden="true">↗</span>
+      </a>
+    ))
+  }
+</div>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+    gap: 1rem;
+  }
+  .card {
+    position: relative;
+    border-radius: 22px;
+    padding: 1.5rem;
+    min-height: 13.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--ink);
+    text-decoration: none;
+    transition: transform 0.15s;
+  }
+  .card:hover {
+    color: var(--ink);
+    transform: translateY(-4px) rotate(-0.4deg);
+  }
+  .tag {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 999px;
+    padding: 0.2rem 0.75rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  h3 {
+    font-family: var(--brand);
+    font-weight: 800;
+    font-size: 1.6rem;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin: auto 0 0;
+  }
+  p {
+    margin: 0;
+    color: #2c2e33;
+    font-size: 0.97rem;
+    line-height: 1.45;
+  }
+  .arrow {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.4rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+</style>

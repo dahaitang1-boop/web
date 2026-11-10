@@ -1,6 +1,10 @@
 ---
 title: Memoir writer
 oneLiner: An interview-first writing workflow with a style spec distilled from a decade of the author's own prose, and no invented details.
+short: 'Interview first, then write. No invented details.'
+tag: Writing
+why: >-
+  I wanted to write down my own life before I forget it. A model that writes freely invents details. So the process starts with an interview, and nothing goes on the page that I did not say.
 role: sole author
 period: '2026'
 stack:
@@ -21,7 +25,7 @@ metrics:
     value: 800–2,500
     note: words. Short over padded, enforced as a check not a suggestion
 sanitized: true
-reviewed: 2026-07-27
+reviewed: 2026-11-10
 ---
 
 ## The failure mode this is built against

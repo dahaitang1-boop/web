@@ -1,6 +1,10 @@
 ---
-title: Lebensadmin cockpit
+title: Life-admin cockpit
 oneLiner: A dashboard with no backend — one standard-library generator reads four unrelated systems and writes a single static file.
+short: 'Every official letter and deadline, on one page.'
+tag: Admin
+why: >-
+  Living in a second country means official letters in a second language, each with a deadline inside. I kept nearly missing them. I wanted one page that tells me what is due and what I have to do.
 role: sole author
 period: 2025 – 2026
 stack:
@@ -21,7 +25,7 @@ metrics:
     value: '0'
     note: no server, no database, no sync daemon, no cron requirement
 sanitized: true
-reviewed: 2026-07-27
+reviewed: 2026-11-10
 ---
 
 ## Why a dashboard at all
